@@ -1,2967 +1,645 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📦 Procurement Dashboard - Aurora Luxe</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#070812">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Alpro Procurement">
-    <link rel="icon" href="icons/icon-192.png">
-    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg: #070812;
-            --bg-soft: #0d1120;
-            --panel: rgba(15, 23, 42, 0.82);
-            --panel-2: rgba(30, 41, 59, 0.82);
-            --line: rgba(255, 255, 255, 0.10);
-            --line-strong: rgba(255, 255, 255, 0.18);
-            --text: #f8fafc;
-            --muted: #cbd5e1;
-            --primary: #fbbf24;
-            --primary-2: #f97316;
-            --success: #34d399;
-            --warning: #f59e0b;
-            --danger: #fb7185;
-            --info: #67e8f9;
-            --purple: #a78bfa;
-            --teal: #22d3ee;
-            --rose: #f472b6;
-            --shadow: 0 28px 80px rgba(2, 6, 23, 0.48);
-            --radius-xl: 30px;
-            --radius-lg: 24px;
-            --radius-md: 18px;
-            --radius-sm: 12px;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-            min-height: 100vh;
-            color: var(--text);
-            background:
-                radial-gradient(circle at top left, rgba(251, 191, 36, 0.16), transparent 24%),
-                radial-gradient(circle at 85% 10%, rgba(167, 139, 250, 0.18), transparent 26%),
-                radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.14), transparent 28%),
-                linear-gradient(145deg, #04050b 0%, #0a1020 42%, #111b35 100%);
-            padding: 24px;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 36px 36px;
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.45), transparent 85%);
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            background:
-                radial-gradient(circle at 12% 14%, rgba(255,255,255,0.08), transparent 18%),
-                radial-gradient(circle at 88% 84%, rgba(251,191,36,0.10), transparent 20%);
-            mix-blend-mode: screen;
-            opacity: 0.8;
-        }
-
-        .container {
-            max-width: 1880px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-
-        .glass {
-            background: linear-gradient(180deg, rgba(15, 23, 42, 0.86), rgba(15, 23, 42, 0.72));
-            border: 1px solid var(--line);
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
-        }
-
-        .hero {
-            border-radius: var(--radius-xl);
-            padding: 34px;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 22px;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at 18% 14%, rgba(251, 191, 36, 0.22), transparent 24%),
-                radial-gradient(circle at 82% 0%, rgba(167, 139, 250, 0.18), transparent 30%),
-                linear-gradient(135deg, rgba(255,255,255,0.04), transparent 45%);
-            pointer-events: none;
-        }
-
-        .hero-top {
-            display: flex;
-            justify-content: space-between;
-            gap: 24px;
-            align-items: flex-start;
-            position: relative;
-            z-index: 1;
-        }
-
-        .eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.14em;
-            color: #fde68a;
-            background: rgba(251, 191, 36, 0.12);
-            border: 1px solid rgba(251, 191, 36, 0.2);
-            padding: 10px 14px;
-            border-radius: 999px;
-            margin-bottom: 16px;
-        }
-
-        .hero h1 {
-            font-size: clamp(2.1rem, 4vw, 3.4rem);
-            line-height: 1.05;
-            letter-spacing: -0.04em;
-            margin-bottom: 12px;
-        }
-
-        .hero h1 span {
-            background: linear-gradient(135deg, #fde68a, #fbbf24, #f59e0b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero p {
-            color: var(--muted);
-            max-width: 860px;
-            font-size: 1rem;
-            line-height: 1.7;
-        }
-
-        .hero-badges {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(180px, 1fr));
-            gap: 14px;
-            min-width: min(100%, 390px);
-        }
-
-        .mini-panel {
-            border-radius: 20px;
-            padding: 18px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-
-        .mini-panel-label {
-            font-size: 12px;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-
-        .mini-panel-value {
-            font-size: 1.35rem;
-            font-weight: 800;
-            color: #fff7d6;
-        }
-
-        .top-strip {
-            margin-top: 24px;
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 16px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .top-strip-card {
-            border-radius: 20px;
-            padding: 18px 20px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-
-        .top-strip-card .label {
-            color: var(--muted);
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .top-strip-card .value {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: var(--text);
-        }
-
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(6, minmax(0, 1fr));
-            gap: 16px;
-            margin-bottom: 22px;
-        }
-
-        .kpi-card {
-            border-radius: 24px;
-            padding: 18px 16px;
-            position: relative;
-            overflow: hidden;
-            min-width: 0;
-            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-            background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.05));
-        }
-
-        .kpi-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(251, 191, 36, 0.28);
-            box-shadow: 0 20px 48px rgba(0,0,0,0.42);
-        }
-
-        .kpi-card::after {
-            content: '';
-            position: absolute;
-            inset: auto -10% -45% auto;
-            width: 120px;
-            height: 120px;
-            border-radius: 999px;
-            background: radial-gradient(circle, rgba(251, 191, 36, 0.18), transparent 65%);
-        }
-
-        .kpi-icon {
-            width: 44px;
-            height: 44px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 15px;
-            font-size: 20px;
-            margin-bottom: 12px;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.10);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
-        }
-
-        .kpi-label {
-            font-size: 11px;
-            letter-spacing: 0.10em;
-            text-transform: uppercase;
-            color: rgba(226, 232, 240, 0.82);
-            font-weight: 800;
-            margin-bottom: 6px;
-            line-height: 1.35;
-        }
-
-        .kpi-value {
-            font-size: clamp(0.98rem, 1.35vw, 1.52rem);
-            font-weight: 900;
-            letter-spacing: -0.04em;
-            line-height: 1.18;
-            margin-bottom: 0;
-            overflow-wrap: anywhere;
-            word-break: break-word;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .kpi-note {
-            min-height: 0;
-            margin: 0;
-            font-size: 0;
-            line-height: 0;
-            color: transparent;
-        }
-
-        .controls {
-            border-radius: var(--radius-lg);
-            padding: 18px;
-            margin-bottom: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 18px;
-            flex-wrap: wrap;
-        }
-
-        .controls-left,
-        .controls-right {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .field,
-        .btn {
-            min-height: 46px;
-            border-radius: 14px;
-            font-family: inherit;
-            font-size: 14px;
-            border: 1px solid var(--line-strong);
-            transition: all 0.2s ease;
-        }
-
-        .field {
-            min-width: 180px;
-            padding: 0 14px;
-            background: rgba(255,255,255,0.04);
-            color: var(--text);
-            outline: none;
-        }
-
-        .field:focus {
-            border-color: rgba(251, 191, 36, 0.48);
-            box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
-        }
-
-        .btn {
-            padding: 0 18px;
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            color: #18130a;
-            border: none;
-            box-shadow: 0 14px 24px rgba(245, 158, 11, 0.25);
-        }
-
-        .btn-secondary {
-            background: rgba(255,255,255,0.06);
-            color: var(--text);
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-        }
-
-        .last-updated {
-            padding: 12px 16px;
-            border-radius: 14px;
-            background: rgba(56, 189, 248, 0.08);
-            border: 1px solid rgba(56, 189, 248, 0.18);
-            font-size: 13px;
-            color: #d7f3ff;
-            font-weight: 700;
-        }
-
-        .alert-strip {
-            display: grid;
-            grid-template-columns: 1.25fr 1fr;
-            gap: 18px;
-            margin-bottom: 22px;
-        }
-
-        .health-card,
-        .insight-card {
-            border-radius: var(--radius-lg);
-            padding: 24px;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 18px;
-        }
-
-        .section-title h2 {
-            font-size: 1.1rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-        }
-
-        .status-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 9px 14px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-        }
-
-        .status-pill.healthy {
-            color: #bff8df;
-            background: rgba(16, 185, 129, 0.13);
-            border: 1px solid rgba(16, 185, 129, 0.28);
-        }
-
-        .status-pill.watchlist {
-            color: #ffe7b0;
-            background: rgba(245, 158, 11, 0.12);
-            border: 1px solid rgba(245, 158, 11, 0.28);
-        }
-
-        .status-pill.critical {
-            color: #ffc9c9;
-            background: rgba(239, 68, 68, 0.12);
-            border: 1px solid rgba(239, 68, 68, 0.28);
-        }
-
-        .health-content {
-            display: grid;
-            grid-template-columns: 1fr 0.95fr;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .health-value {
-            font-size: clamp(2rem, 4vw, 3.2rem);
-            font-weight: 900;
-            letter-spacing: -0.05em;
-            margin-bottom: 10px;
-        }
-
-        .health-copy {
-            color: var(--muted);
-            line-height: 1.7;
-            font-size: 14px;
-        }
-
-        .progress-wrap {
-            margin-top: 18px;
-        }
-
-        .progress-meta {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            font-size: 13px;
-            color: var(--muted);
-            margin-bottom: 10px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 14px;
-            border-radius: 999px;
-            background: rgba(255,255,255,0.06);
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-
-        .progress-bar > span {
-            display: block;
-            height: 100%;
-            width: 0;
-            border-radius: inherit;
-            background: linear-gradient(90deg, #10b981, #fbbf24, #ef4444);
-            transition: width 0.6s ease;
-        }
-
-        .health-metrics {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-        }
-
-        .health-stat {
-            padding: 14px;
-            border-radius: 16px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.07);
-        }
-
-        .health-stat .small-label {
-            font-size: 11px;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-
-        .health-stat .small-value {
-            font-size: 1.2rem;
-            font-weight: 900;
-        }
-
-        .insight-list {
-            list-style: none;
-            display: grid;
-            gap: 12px;
-        }
-
-        .insight-list li {
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-            padding: 14px 16px;
-            border-radius: 16px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.07);
-            color: var(--text);
-            line-height: 1.6;
-            font-size: 14px;
-        }
-
-        .insight-list li span {
-            color: #fde68a;
-        }
-
-        .content-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 18px;
-            margin-bottom: 22px;
-        }
-
-        .panel {
-            border-radius: var(--radius-lg);
-            padding: 22px;
-            background: linear-gradient(180deg, rgba(15,23,42,0.86), rgba(15,23,42,0.72));
-        }
-
-        .table-toolbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-
-        .table-subtitle {
-            color: var(--muted);
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .table-wrap {
-            overflow: auto;
-            border-radius: 18px;
-            border: 1px solid rgba(255,255,255,0.06);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 980px;
-        }
-
-        thead th {
-            position: sticky;
-            top: 0;
-            z-index: 2;
-            background: linear-gradient(180deg, rgba(251, 191, 36, 0.98), rgba(245, 158, 11, 0.98));
-            color: #18130a;
-            padding: 15px 16px;
-            text-align: left;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            white-space: nowrap;
-        }
-
-        tbody td {
-            padding: 15px 16px;
-            border-top: 1px solid rgba(255,255,255,0.06);
-            font-size: 14px;
-            color: #f8fafc;
-            vertical-align: middle;
-        }
-
-        tbody tr {
-            background: rgba(255,255,255,0.02);
-            transition: background 0.2s ease;
-        }
-
-        tbody tr:hover {
-            background: rgba(255,255,255,0.05);
-        }
-
-        tbody tr.total-row {
-            background: linear-gradient(135deg, rgba(251, 191, 36, 0.14), rgba(245, 158, 11, 0.12)) !important;
-        }
-
-        tbody tr.total-row td {
-            font-weight: 900;
-            color: #fff0bf;
-        }
-
-        .num {
-            text-align: right;
-            white-space: nowrap;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .category-cell {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .category-name {
-            font-weight: 800;
-        }
-
-        .usage-track {
-            width: 100%;
-            height: 10px;
-            border-radius: 999px;
-            overflow: hidden;
-            background: rgba(255,255,255,0.07);
-        }
-
-        .usage-track span {
-            display: block;
-            height: 100%;
-            border-radius: inherit;
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 800;
-            white-space: nowrap;
-        }
-
-        .badge-ok {
-            color: #bcf6df;
-            background: rgba(16, 185, 129, 0.14);
-            border: 1px solid rgba(16, 185, 129, 0.28);
-        }
-
-        .badge-warning {
-            color: #ffe7b0;
-            background: rgba(245, 158, 11, 0.14);
-            border: 1px solid rgba(245, 158, 11, 0.28);
-        }
-
-        .badge-over {
-            color: #ffc9c9;
-            background: rgba(239, 68, 68, 0.14);
-            border: 1px solid rgba(239, 68, 68, 0.28);
-        }
-
-        .supplier-summary-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 18px;
-        }
-
-        .supplier-card-block {
-            padding: 18px;
-            border-radius: 20px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-
-        .supplier-card-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 14px;
-            flex-wrap: wrap;
-        }
-
-        .supplier-card-head h3 {
-            font-size: 0.98rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-        }
-
-        .supplier-list {
-            display: grid;
-            gap: 12px;
-        }
-
-        .supplier-item {
-            padding: 16px;
-            border-radius: 18px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.07);
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            gap: 14px;
-            align-items: center;
-        }
-
-        .supplier-rank {
-            width: 42px;
-            height: 42px;
-            border-radius: 14px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            color: #1b1200;
-            background: linear-gradient(135deg, #fde68a, #fbbf24);
-        }
-
-        .supplier-name {
-            font-weight: 800;
-            margin-bottom: 4px;
-        }
-
-        .supplier-caption {
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .supplier-amount {
-            font-weight: 900;
-            color: #fff0bf;
-            text-align: right;
-        }
-
-        .chart-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 18px;
-            margin-bottom: 22px;
-        }
-
-        .chart-panel {
-            border-radius: var(--radius-lg);
-            padding: 22px;
-            min-height: 420px;
-            background: linear-gradient(180deg, rgba(15,23,42,0.86), rgba(15,23,42,0.72));
-        }
-
-        .chart-holder {
-            position: relative;
-            min-height: 320px;
-        }
-
-        .footer {
-            padding: 20px 24px;
-            border-radius: 22px;
-            color: var(--muted);
-            font-size: 14px;
-            line-height: 1.7;
-            text-align: center;
-        }
-
-        .empty-state {
-            display: grid;
-            place-items: center;
-            min-height: 180px;
-            border-radius: 18px;
-            border: 1px dashed rgba(255,255,255,0.12);
-            color: var(--muted);
-            text-align: center;
-            padding: 20px;
-        }
-
-        .loading {
-            display: none;
-            margin-bottom: 18px;
-            padding: 18px 20px;
-            border-radius: 18px;
-            background: rgba(56, 189, 248, 0.08);
-            border: 1px solid rgba(56, 189, 248, 0.16);
-            color: #d8f4ff;
-            font-weight: 800;
-        }
-
-        .loading.active {
-            display: block;
-        }
-
-        @media (max-width: 1280px) {
-            .kpi-grid {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-            }
-
-            .content-grid,
-            .alert-strip,
-            .chart-grid,
-            .health-content {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 980px) {
-            .hero-top,
-            .top-strip {
-                grid-template-columns: 1fr;
-                display: grid;
-            }
-
-            .hero-badges {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        @media (max-width: 760px) {
-            body {
-                padding: 14px;
-            }
-
-            .hero,
-            .panel,
-            .chart-panel,
-            .health-card,
-            .insight-card {
-                padding: 18px;
-            }
-
-            .kpi-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .hero-badges,
-            .top-strip,
-            .chart-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .controls-left,
-            .controls-right {
-                width: 100%;
-            }
-
-            .field,
-            .btn,
-            .last-updated {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 540px) {
-            .kpi-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* ===== Theme Refresh Override: colorful, brighter, same functionality ===== */
-        :root {
-            --bg: #f8fbff;
-            --bg-soft: #eef4ff;
-            --panel: rgba(255,255,255,0.82);
-            --panel-2: rgba(255,255,255,0.92);
-            --line: rgba(99, 102, 241, 0.10);
-            --line-strong: rgba(99, 102, 241, 0.18);
-            --text: #172554;
-            --muted: #64748b;
-            --primary: #8b5cf6;
-            --primary-2: #ec4899;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #0ea5e9;
-            --purple: #8b5cf6;
-            --shadow: 0 24px 60px rgba(99, 102, 241, 0.14);
-        }
-
-        body {
-            color: var(--text);
-            background:
-                radial-gradient(circle at top left, rgba(99, 102, 241, 0.18), transparent 28%),
-                radial-gradient(circle at top right, rgba(236, 72, 153, 0.14), transparent 24%),
-                radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.16), transparent 28%),
-                radial-gradient(circle at bottom left, rgba(251, 191, 36, 0.12), transparent 26%),
-                linear-gradient(135deg, #ffffff 0%, #f8fbff 40%, #fdf4ff 100%);
-        }
-
-        body::before {
-            background-image:
-                linear-gradient(rgba(99,102,241,0.045) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(99,102,241,0.045) 1px, transparent 1px);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.16), transparent 90%);
-        }
-
-        .glass,
-        .panel,
-        .chart-panel,
-        .health-card,
-        .insight-card,
-        .controls,
-        .footer,
-        .kpi-card {
-            background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(255,255,255,0.74));
-            border: 1px solid rgba(99, 102, 241, 0.12);
-            box-shadow: 0 18px 45px rgba(99, 102, 241, 0.12);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-        }
-
-        .hero {
-            background: linear-gradient(135deg, rgba(255,255,255,0.90), rgba(255,247,237,0.92), rgba(243,232,255,0.88));
-            padding: 28px;
-        }
-        .hero {
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.72);
-            box-shadow: 0 32px 90px rgba(99, 102, 241, 0.16);
-        }
-
-        .hero::after {
-            content: '';
-            position: absolute;
-            inset: auto auto -80px -80px;
-            width: 220px;
-            height: 220px;
-            border-radius: 999px;
-            background: radial-gradient(circle, rgba(255,255,255,0.72), rgba(255,255,255,0));
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        .hero::before {
-            background:
-                radial-gradient(circle at 12% 18%, rgba(99, 102, 241, 0.18), transparent 22%),
-                radial-gradient(circle at 88% 0%, rgba(236, 72, 153, 0.16), transparent 26%),
-                radial-gradient(circle at 65% 75%, rgba(14, 165, 233, 0.14), transparent 22%);
-        }
-
-        .hero-top {
-            justify-content: space-between;
-            align-items: stretch;
-            gap: 28px;
-        }
-
-        .hero-brand {
-            display: flex;
-            align-items: flex-start;
-            gap: 20px;
-            flex: 1 1 auto;
-            min-width: 0;
-        }
-
-        .hero-brand-logo {
-            width: 86px;
-            height: 86px;
-            object-fit: contain;
-            border-radius: 24px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(238,242,255,0.90));
-            padding: 10px;
-            border: 1px solid rgba(59, 130, 246, 0.18);
-            box-shadow: 0 18px 40px rgba(37, 99, 235, 0.18);
-            flex-shrink: 0;
-        }
-
-        .hero-copy {
-            min-width: 0;
-        }
-
-        .hero-badges {
-            width: min(100%, 560px);
-            min-width: 0;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            align-self: stretch;
-        }
-
-        .mini-panel,
-        .top-strip-card,
-        .health-stat,
-        .insight-list li,
-        .supplier-item,
-        .empty-state {
-            background: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.68));
-            border: 1px solid rgba(99, 102, 241, 0.10);
-        }
-
-        .mini-panel-label,
-        .top-strip-card .label,
-        .kpi-label,
-        .health-stat .small-label,
-        .table-subtitle,
-        .supplier-caption,
-        .footer,
-        .progress-meta,
-        .health-copy,
-        .kpi-note,
-        .section-title .sub,
-        .empty-state {
-            color: var(--muted);
-        }
-
-        .mini-panel-value,
-        .supplier-amount {
-            color: #6d28d9;
-        }
-
-        .kpi-card::after {
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.18), transparent 65%);
-        }
-
-        .kpi-icon {
-            background: linear-gradient(135deg, rgba(139,92,246,0.14), rgba(14,165,233,0.12));
-            border: 1px solid rgba(139,92,246,0.12);
-        }
-
-        .field {
-            background: rgba(255,255,255,0.88);
-            color: var(--text);
-            border: 1px solid rgba(99, 102, 241, 0.16);
-        }
-
-        .field:focus {
-            border-color: rgba(139, 92, 246, 0.45);
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.10);
-        }
-
-        .btn-secondary {
-            background: rgba(255,255,255,0.88);
-            color: var(--text);
-            border: 1px solid rgba(99, 102, 241, 0.14);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #8b5cf6, #ec4899, #f59e0b);
-            color: #ffffff;
-            box-shadow: 0 14px 30px rgba(139, 92, 246, 0.20);
-        }
-
-        .last-updated,
-        .loading {
-            background: rgba(14, 165, 233, 0.10);
-            border: 1px solid rgba(14, 165, 233, 0.18);
-            color: #0f172a;
-        }
-
-        .status-pill.healthy,
-        .badge-ok {
-            color: #047857;
-            background: rgba(16, 185, 129, 0.12);
-            border: 1px solid rgba(16, 185, 129, 0.24);
-        }
-
-        .status-pill.watchlist,
-        .badge-warning {
-            color: #b45309;
-            background: rgba(245, 158, 11, 0.12);
-            border: 1px solid rgba(245, 158, 11, 0.24);
-        }
-
-        .status-pill.critical,
-        .badge-over {
-            color: #b91c1c;
-            background: rgba(239, 68, 68, 0.12);
-            border: 1px solid rgba(239, 68, 68, 0.24);
-        }
-
-        .progress-bar,
-        .usage-track {
-            background: rgba(148, 163, 184, 0.16);
-            border: 1px solid rgba(99, 102, 241, 0.08);
-        }
-
-        .table-wrap {
-            border: 1px solid rgba(99, 102, 241, 0.12);
-            background: rgba(255,255,255,0.70);
-        }
-
-        thead th {
-            background: linear-gradient(135deg, #8b5cf6, #ec4899, #f59e0b);
-            color: #ffffff;
-        }
-
-        tbody td {
-            color: var(--text);
-            border-top: 1px solid rgba(99, 102, 241, 0.08);
-        }
-
-        tbody tr {
-            background: rgba(255,255,255,0.52);
-        }
-
-        tbody tr:hover {
-            background: rgba(139, 92, 246, 0.08);
-        }
-
-        tbody tr.total-row {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.10), rgba(245, 158, 11, 0.12)) !important;
-        }
-
-        tbody tr.total-row td {
-            color: #7c3aed;
-        }
-
-        .supplier-rank {
-            color: #ffffff;
-            background: linear-gradient(135deg, #8b5cf6, #ec4899);
-        }
-
-        .footer {
-            color: #64748b;
-        }
-
-        @media (max-width: 980px) {
-            .hero-badges {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-        }
-
-        .panel.table-panel {
-            padding: 24px 24px 18px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.76));
-            border: 1px solid rgba(99, 102, 241, 0.16);
-            box-shadow: 0 24px 60px rgba(99, 102, 241, 0.12);
-        }
-
-        .panel.supplier-panel {
-            background:
-                radial-gradient(circle at top right, rgba(236, 72, 153, 0.10), transparent 28%),
-                radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.10), transparent 28%),
-                linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.76));
-            border: 1px solid rgba(99, 102, 241, 0.14);
-        }
-
-        .supplier-summary-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .table-wrap {
-            border-radius: 24px;
-            background:
-                linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,255,255,0.68));
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
-        }
-
-        table {
-            min-width: 1320px;
-        }
-
-        thead th:first-child {
-            border-top-left-radius: 18px;
-        }
-
-        thead th:last-child {
-            border-top-right-radius: 18px;
-        }
-
-        .supplier-card-block {
-            background: linear-gradient(180deg, rgba(255,255,255,0.90), rgba(248,250,255,0.82));
-            border: 1px solid rgba(99, 102, 241, 0.12);
-            box-shadow: 0 14px 30px rgba(99, 102, 241, 0.08);
-        }
-
-        .supplier-item {
-            background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,255,0.88));
-            box-shadow: 0 10px 24px rgba(99, 102, 241, 0.06);
-        }
-
-        .section-title h2,
-        .supplier-card-head h3,
-        .category-name {
-            color: #1e1b4b;
-        }
-
-        .hero p {
-            color: #475569;
-        }
-
-        .table-panel .table-subtitle {
-            max-width: 920px;
-        }
-
-        .table-toolbar .badge,
-        .section-title .badge {
-            box-shadow: 0 10px 24px rgba(99, 102, 241, 0.08);
-        }
-
-        @media (max-width: 1200px) {
-            .hero-top {
-                flex-direction: column;
-            }
-
-            .hero-badges {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 900px) {
-            .supplier-summary-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-brand {
-                align-items: center;
-            }
-        }
-
-        @media (max-width: 760px) {
-            .hero-brand {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .hero-brand-logo {
-                width: 72px;
-                height: 72px;
-            }
-        }
-        @media (max-width: 760px) {
-            .hero-badges {
-                grid-template-columns: 1fr;
-            }
-        }
-
-    
-
-        /* ===== Revised visual polish & theme switcher ===== */
-        body {
-            transition: background 0.35s ease, color 0.35s ease;
-        }
-
-        .hero-copy {
-            display: none;
-        }
-
-        .hero-brand-compact {
-            flex: 0 0 auto;
-            align-items: center;
-        }
-
-        .theme-switch-card {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 14px 16px;
-            border-radius: 20px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.82));
-            border: 1px solid rgba(99, 102, 241, 0.12);
-            box-shadow: 0 14px 30px rgba(99, 102, 241, 0.10);
-        }
-
-        .theme-switch-label {
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: #64748b;
-        }
-
-        .theme-switch {
-            display: inline-flex;
-            gap: 8px;
-            padding: 6px;
-            border-radius: 999px;
-            background: rgba(148, 163, 184, 0.12);
-            border: 1px solid rgba(99, 102, 241, 0.10);
-        }
-
-        .theme-option {
-            border: 0;
-            border-radius: 999px;
-            padding: 10px 16px;
-            font: inherit;
-            font-size: 13px;
-            font-weight: 700;
-            color: #475569;
-            background: transparent;
-            cursor: pointer;
-            transition: all 0.22s ease;
-        }
-
-        .theme-option:hover {
-            transform: translateY(-1px);
-            color: #1e293b;
-        }
-
-        .theme-option.active {
-            color: #ffffff;
-            background: linear-gradient(135deg, #8b5cf6, #ec4899, #f59e0b);
-            box-shadow: 0 10px 22px rgba(139, 92, 246, 0.24);
-        }
-
-        /* ===== Requested refinements: landscape header, logo img src, clearer theme & insights ===== */
-        .hero {
-            padding: 26px 24px 22px;
-        }
-
-        .hero-top {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            gap: 18px;
-        }
-
-        .hero-brand.hero-brand-compact {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 24px;
-            min-width: 0;
-            padding: 20px 24px;
-            border-radius: 30px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.97), rgba(247,248,255,0.92), rgba(255,250,244,0.92));
-            border: 1px solid rgba(99, 102, 241, 0.10);
-            box-shadow: 0 20px 48px rgba(99, 102, 241, 0.10);
-        }
-
-        .hero-brand-head {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            padding: 2px 0;
-            min-width: 0;
-            flex: 1 1 auto;
-        }
-
-        .hero-brand-logo {
-            display: block;
-            width: 96px;
-            height: 96px;
-            padding: 10px 12px;
-            border-radius: 24px;
-            object-fit: contain;
-            object-position: center;
-            background: linear-gradient(180deg, rgba(255,255,255,1), rgba(248,250,252,0.96));
-            border: 1px solid rgba(148, 163, 184, 0.18);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), 0 16px 34px rgba(37, 99, 235, 0.14);
-            flex-shrink: 0;
-        }
-
-        .hero-brand-title-wrap {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 8px;
-            min-width: 0;
-        }
-
-        .hero-brand-kicker {
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: #64748b;
-        }
-
-        .hero-brand-title {
-            margin: 0;
-            font-family: 'Sora', 'Plus Jakarta Sans', sans-serif;
-            font-size: clamp(2rem, 3.2vw, 3.15rem);
-            line-height: 1.02;
-            letter-spacing: -0.05em;
-            background: linear-gradient(135deg, #312e81 0%, #7c3aed 45%, #ec4899 78%, #f59e0b 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-wrap: balance;
-        }
-
-        .theme-switch-card {
-            width: min(100%, 240px);
-            flex: 0 0 240px;
-            gap: 12px;
-            padding: 16px 18px;
-            border-radius: 22px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(241,245,249,0.90));
-            border: 1px solid rgba(99, 102, 241, 0.10);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.88), 0 12px 26px rgba(99, 102, 241, 0.08);
-        }
-
-        .theme-switch-label {
-            font-family: 'Sora', 'Plus Jakarta Sans', sans-serif;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: #475569;
-        }
-
-        .theme-switch {
-            width: 100%;
-            justify-content: space-between;
-            gap: 10px;
-            padding: 6px;
-            border-radius: 999px;
-            background: linear-gradient(180deg, rgba(99, 102, 241, 0.10), rgba(236, 72, 153, 0.06));
-            box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.06);
-        }
-
-        .theme-option {
-            flex: 1 1 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            min-height: 42px;
-            font-family: 'Sora', 'Plus Jakarta Sans', sans-serif;
-            font-size: 12.5px;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-        }
-
-        .theme-option.active {
-            color: #ffffff;
-            background: linear-gradient(135deg, #8b5cf6, #ec4899, #f59e0b);
-            box-shadow: 0 12px 24px rgba(139, 92, 246, 0.22);
-        }
-
-        .hero-badges {
-            width: 100%;
-            max-width: none;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 16px;
-            align-content: start;
-            padding-top: 6px;
-        }
-
-        .mini-panel {
-            min-height: 112px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 20px 22px;
-            border-radius: 22px;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.88), 0 12px 28px rgba(99, 102, 241, 0.08);
-        }
-
-        .mini-panel-label {
-            margin-bottom: 10px;
-            color: #64748b;
-        }
-
-        .mini-panel-value {
-            font-family: 'Sora', 'Plus Jakarta Sans', sans-serif;
-            font-size: clamp(1.02rem, 1.4vw, 1.36rem);
-            line-height: 1.28;
-            color: #5b21b6;
-            letter-spacing: -0.02em;
-            word-break: break-word;
-        }
-
-        .used-percent {
-            font-weight: 800;
-            color: #4c1d95;
-        }
-
-        .top-strip {
-            margin-top: 18px;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 14px;
-        }
-
-        .top-strip-card {
-            min-height: 96px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 18px 18px;
-            border-radius: 20px;
-        }
-
-        .top-strip-card .label {
-            color: #64748b;
-        }
-
-        .top-strip-card .value {
-            font-family: 'Sora', 'Plus Jakarta Sans', sans-serif;
-            line-height: 1.3;
-            letter-spacing: -0.02em;
-        }
-
-        .insight-card {
-            background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,255,255,0.84));
-            border: 1px solid rgba(99, 102, 241, 0.12);
-            box-shadow: 0 24px 60px rgba(99, 102, 241, 0.10);
-        }
-
-        .insight-card .section-title h2 {
-            font-family: 'Sora', 'Plus Jakarta Sans', sans-serif;
-            font-size: clamp(1.02rem, 1.25vw, 1.22rem);
-            color: #312e81;
-            letter-spacing: -0.02em;
-        }
-
-        .insight-list {
-            gap: 14px;
-        }
-
-        .insight-list li {
-            display: grid;
-            grid-template-columns: 16px 1fr;
-            gap: 14px;
-            align-items: center;
-            min-height: 78px;
-            padding: 16px 18px;
-            border-radius: 22px;
-            border: 1px solid rgba(250, 204, 21, 0.24);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.72), 0 10px 24px rgba(15, 23, 42, 0.05);
-            background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,250,235,0.92));
-        }
-
-        .insight-list li span {
-            font-size: 22px;
-            line-height: 1;
-            color: #f59e0b;
-            font-weight: 900;
-            transform: translateY(-1px);
-        }
-
-        .insight-text {
-            display: grid;
-            gap: 3px;
-            line-height: 1.38;
-        }
-
-        .insight-label {
-            display: block;
-            font-family: 'Sora', 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 700;
-            letter-spacing: -0.01em;
-            color: #b45309;
-        }
-
-        .insight-value {
-            display: block;
-            font-family: 'Sora', 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.98rem;
-            font-weight: 800;
-            color: #0f172a;
-            letter-spacing: -0.01em;
-        }
-
-        body[data-theme="dark"] {
-            color-scheme: dark;
-            background:
-                radial-gradient(circle at top left, rgba(251, 191, 36, 0.12), transparent 22%),
-                radial-gradient(circle at 85% 10%, rgba(167, 139, 250, 0.16), transparent 24%),
-                radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.12), transparent 24%),
-                linear-gradient(145deg, #04050b 0%, #0a1020 42%, #101a31 100%);
-        }
-
-        body[data-theme="dark"] .glass,
-        body[data-theme="dark"] .panel,
-        body[data-theme="dark"] .chart-panel,
-        body[data-theme="dark"] .health-card,
-        body[data-theme="dark"] .insight-card,
-        body[data-theme="dark"] .controls,
-        body[data-theme="dark"] .footer,
-        body[data-theme="dark"] .kpi-card {
-            background: linear-gradient(180deg, rgba(10, 16, 32, 0.94), rgba(12, 18, 35, 0.86));
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 22px 60px rgba(2, 6, 23, 0.44);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-        }
-
-        body[data-theme="dark"] .hero {
-            background: linear-gradient(135deg, rgba(10,16,32,0.96), rgba(15,23,42,0.94), rgba(30,41,59,0.92));
-            border: 1px solid rgba(255,255,255,0.10);
-            box-shadow: 0 32px 90px rgba(2, 6, 23, 0.55);
-        }
-
-        body[data-theme="dark"] .hero-brand.hero-brand-compact {
-            background: linear-gradient(135deg, rgba(15,23,42,0.94), rgba(30,41,59,0.90), rgba(51,65,85,0.84));
-            border: 1px solid rgba(255,255,255,0.09);
-            box-shadow: 0 20px 48px rgba(2, 6, 23, 0.38);
-        }
-
-        body[data-theme="dark"] .hero-brand-logo {
-            background: linear-gradient(180deg, rgba(15,23,42,0.96), rgba(30,41,59,0.88));
-            border: 1px solid rgba(251, 191, 36, 0.16);
-            box-shadow: 0 18px 40px rgba(2, 6, 23, 0.45);
-        }
-
-        body[data-theme="dark"] .hero-brand-kicker {
-            color: #cbd5e1;
-        }
-
-        body[data-theme="dark"] .hero-brand-title {
-            background: linear-gradient(135deg, #f8fafc 0%, #fbbf24 52%, #c084fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        body[data-theme="dark"] .theme-switch-card {
-            background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.80));
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 16px 32px rgba(2, 6, 23, 0.35);
-        }
-
-        body[data-theme="dark"] .theme-switch-label,
-        body[data-theme="dark"] .mini-panel-label,
-        body[data-theme="dark"] .top-strip-card .label,
-        body[data-theme="dark"] .kpi-label,
-        body[data-theme="dark"] .health-stat .small-label,
-        body[data-theme="dark"] .table-subtitle,
-        body[data-theme="dark"] .supplier-caption,
-        body[data-theme="dark"] .footer,
-        body[data-theme="dark"] .progress-meta,
-        body[data-theme="dark"] .health-copy,
-        body[data-theme="dark"] .kpi-note,
-        body[data-theme="dark"] .section-title .sub,
-        body[data-theme="dark"] .empty-state,
-        body[data-theme="dark"] .hero p {
-            color: #94a3b8;
-        }
-
-        body[data-theme="dark"] .theme-switch-label,
-        body[data-theme="dark"] .mini-panel-label,
-        body[data-theme="dark"] .top-strip-card .label {
-            color: #cbd5e1;
-        }
-
-        body[data-theme="dark"] .theme-switch {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-
-        body[data-theme="dark"] .theme-option {
-            color: #cbd5e1;
-        }
-
-        body[data-theme="dark"] .theme-option:hover {
-            color: #ffffff;
-        }
-
-        body[data-theme="dark"] .theme-option.active {
-            color: #0f172a;
-            background: linear-gradient(135deg, #fbbf24, #c084fc, #22d3ee);
-            box-shadow: 0 10px 24px rgba(2, 6, 23, 0.34);
-        }
-
-        body[data-theme="dark"] .mini-panel,
-        body[data-theme="dark"] .top-strip-card,
-        body[data-theme="dark"] .health-stat,
-        body[data-theme="dark"] .insight-list li,
-        body[data-theme="dark"] .supplier-item,
-        body[data-theme="dark"] .empty-state,
-        body[data-theme="dark"] .supplier-card-block {
-            background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: none;
-        }
-
-        body[data-theme="dark"] .insight-card {
-            background: linear-gradient(180deg, rgba(8, 12, 24, 0.96), rgba(12, 18, 35, 0.92));
-            border: 1px solid rgba(250, 204, 21, 0.16);
-            box-shadow: 0 24px 60px rgba(2, 6, 23, 0.48);
-        }
-
-        body[data-theme="dark"] .insight-card .section-title h2 {
-            color: #f8fafc;
-        }
-
-        body[data-theme="dark"] .insight-list li {
-            background: linear-gradient(180deg, rgba(250, 204, 21, 0.10), rgba(15, 23, 42, 0.88));
-            border: 1px solid rgba(250, 204, 21, 0.18);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
-        }
-
-        body[data-theme="dark"] .insight-list li span {
-            color: #fcd34d;
-        }
-
-        body[data-theme="dark"] .insight-label {
-            color: #fde68a;
-        }
-
-        body[data-theme="dark"] .insight-value {
-            color: #f8fafc;
-        }
-
-        body[data-theme="dark"] .panel.table-panel {
-            background: linear-gradient(180deg, rgba(8,12,24,0.95), rgba(12,18,35,0.88));
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 24px 60px rgba(2, 6, 23, 0.45);
-        }
-
-        body[data-theme="dark"] .panel.supplier-panel {
-            background:
-                radial-gradient(circle at top right, rgba(236, 72, 153, 0.10), transparent 28%),
-                radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.10), transparent 28%),
-                linear-gradient(180deg, rgba(8,12,24,0.94), rgba(12,18,35,0.86));
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-
-        body[data-theme="dark"] .table-wrap {
-            border: 1px solid rgba(255,255,255,0.08);
-            background: rgba(8,12,24,0.72);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
-        }
-
-        body[data-theme="dark"] tbody tr {
-            background: rgba(255,255,255,0.02);
-        }
-
-        body[data-theme="dark"] tbody tr:hover {
-            background: rgba(139, 92, 246, 0.12);
-        }
-
-        body[data-theme="dark"] tbody tr.total-row {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.16), rgba(245, 158, 11, 0.14)) !important;
-        }
-
-        body[data-theme="dark"] .section-title h2,
-        body[data-theme="dark"] .supplier-card-head h3,
-        body[data-theme="dark"] .category-name,
-        body[data-theme="dark"] .health-value,
-        body[data-theme="dark"] .small-value,
-        body[data-theme="dark"] tbody td,
-        body[data-theme="dark"] .insight-label,
-        body[data-theme="dark"] .insight-value,
-        body[data-theme="dark"] .last-updated,
-        body[data-theme="dark"] .loading {
-            color: #f8fafc;
-        }
-
-        body[data-theme="dark"] .mini-panel-value,
-        body[data-theme="dark"] .supplier-amount {
-            color: #fcd34d;
-        }
-
-        body[data-theme="dark"] .field {
-            background: rgba(15,23,42,0.92);
-            color: #f8fafc;
-            border: 1px solid rgba(255,255,255,0.10);
-        }
-
-        body[data-theme="dark"] .btn-secondary {
-            background: rgba(15,23,42,0.92);
-            color: #f8fafc;
-            border: 1px solid rgba(255,255,255,0.10);
-        }
-
-        body[data-theme="dark"] .last-updated,
-        body[data-theme="dark"] .loading {
-            background: rgba(56, 189, 248, 0.10);
-            border: 1px solid rgba(56, 189, 248, 0.16);
-        }
-
-        body[data-theme="dark"] .progress-bar,
-        body[data-theme="dark"] .usage-track {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-
-        body[data-theme="dark"] .status-pill.healthy,
-        body[data-theme="dark"] .badge-ok {
-            color: #86efac;
-            background: rgba(16, 185, 129, 0.14);
-            border: 1px solid rgba(16, 185, 129, 0.24);
-        }
-
-        body[data-theme="dark"] .status-pill.watchlist,
-        body[data-theme="dark"] .badge-warning {
-            color: #fcd34d;
-            background: rgba(245, 158, 11, 0.14);
-            border: 1px solid rgba(245, 158, 11, 0.24);
-        }
-
-        body[data-theme="dark"] .status-pill.critical,
-        body[data-theme="dark"] .badge-over {
-            color: #fda4af;
-            background: rgba(239, 68, 68, 0.14);
-            border: 1px solid rgba(239, 68, 68, 0.24);
-        }
-
-        @media (max-width: 1180px) {
-            .hero-badges {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-        }
-
-        @media (max-width: 980px) {
-            .hero-brand.hero-brand-compact {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .theme-switch-card {
-                width: 100%;
-                flex: none;
-            }
-        }
-
-        @media (max-width: 760px) {
-            .hero {
-                padding: 20px 18px 18px;
-            }
-
-            .hero-brand-head {
-                align-items: flex-start;
-            }
-
-            .hero-brand-logo {
-                width: 82px;
-                height: 82px;
-                border-radius: 20px;
-            }
-
-            .hero-brand-title {
-                font-size: clamp(1.7rem, 9vw, 2.3rem);
-            }
-
-            .hero-badges,
-            .top-strip {
-                grid-template-columns: 1fr;
-            }
-
-            .theme-switch {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .theme-option {
-                flex: 1 1 0;
-                text-align: center;
-            }
-
-            .insight-list li {
-                align-items: flex-start;
-                min-height: auto;
-            }
-        }
-
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Procurement Dashboard - Alpro</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f59e0b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Alpro Procurement">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --bg:#f5f6f8;
+    --card:#ffffff;
+    --line:#e7e9ee;
+    --text:#111318;
+    --muted:#6b7280;
+    --accent:#f59e0b;
+    --ok:#0f9d58;
+    --ok-bg:#e8f7ee;
+    --warn:#b45309;
+    --warn-bg:#fff4e0;
+    --over:#c0392b;
+    --over-bg:#fde8e6;
+  }
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:40px;
+  }
+  .wrap{ max-width:480px; margin:0 auto; padding:14px; }
+
+  /* Header */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 4px 16px;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand img{ width:34px; height:34px; border-radius:8px; object-fit:cover; }
+  .brand-text .k{ font-size:11px; color:var(--muted); font-weight:600; letter-spacing:.04em; }
+  .brand-text .t{ font-size:16px; font-weight:800; line-height:1.2; }
+  .refresh-btn{
+    width:38px; height:38px; border-radius:12px; border:1px solid var(--line);
+    background:#fff; font-size:17px; display:flex; align-items:center; justify-content:center;
+  }
+  .refresh-btn.spin{ animation:spin 0.8s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .updated{
+    font-size:11.5px; color:var(--muted); text-align:center; margin-bottom:14px;
+  }
+
+  /* Status hero */
+  .status-card{
+    border-radius:18px; padding:18px; margin-bottom:12px; color:#fff;
+    background:linear-gradient(135deg,#111827,#1f2937);
+  }
+  .status-card .row1{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .status-label{ font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; opacity:.75; }
+  .status-pill{
+    font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.06em;
+    padding:5px 10px; border-radius:999px;
+  }
+  .status-pill.healthy{ background:rgba(52,211,153,.2); color:#6ee7b7; }
+  .status-pill.watchlist{ background:rgba(251,191,36,.22); color:#fcd34d; }
+  .status-pill.critical{ background:rgba(248,113,113,.22); color:#fca5a5; }
+  .status-card .big{ font-size:2.1rem; font-weight:800; letter-spacing:-.02em; margin-bottom:4px; }
+  .status-card .desc{ font-size:13px; opacity:.8; line-height:1.5; margin-bottom:14px; }
+  .bar-track{ height:8px; border-radius:999px; background:rgba(255,255,255,.15); overflow:hidden; }
+  .bar-fill{ height:100%; border-radius:999px; background:linear-gradient(90deg,#34d399,#fbbf24,#f87171); width:0%; }
+  .status-meta{ display:flex; justify-content:space-between; font-size:11px; opacity:.7; margin-top:6px; }
+
+  /* Simple KPI list */
+  .kpi-list{ background:var(--card); border:1px solid var(--line); border-radius:16px; margin-bottom:12px; overflow:hidden; }
+  .kpi-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:13px 16px; border-bottom:1px solid var(--line);
+  }
+  .kpi-row:last-child{ border-bottom:none; }
+  .kpi-row .name{ display:flex; align-items:center; gap:10px; font-size:13.5px; color:var(--muted); font-weight:600; }
+  .kpi-row .name .ic{ font-size:16px; }
+  .kpi-row .val{ font-size:14.5px; font-weight:800; }
+
+  /* Section */
+  .section{ margin-bottom:12px; }
+  .section-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:2px 4px 10px;
+  }
+  .section-head h2{ font-size:14.5px; font-weight:800; }
+  .section-head .count{ font-size:11.5px; color:var(--muted); font-weight:600; }
+
+  /* Filters */
+  .filters{ display:flex; gap:8px; margin-bottom:10px; }
+  .filters select, .filters input{
+    flex:1; min-width:0; height:40px; border-radius:12px; border:1px solid var(--line);
+    background:#fff; padding:0 10px; font-size:13px; font-family:inherit; color:var(--text);
+  }
+
+  /* Category cards */
+  .cat-card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:13px 15px; margin-bottom:8px;
+  }
+  .cat-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px; }
+  .cat-name{ font-size:14px; font-weight:800; line-height:1.3; }
+  .badge{
+    font-size:10.5px; font-weight:800; padding:4px 9px; border-radius:999px; white-space:nowrap;
+    text-transform:uppercase; letter-spacing:.03em;
+  }
+  .badge.ok{ background:var(--ok-bg); color:var(--ok); }
+  .badge.warning{ background:var(--warn-bg); color:var(--warn); }
+  .badge.over{ background:var(--over-bg); color:var(--over); }
+  .cat-track{ height:6px; border-radius:999px; background:#eef0f3; overflow:hidden; margin-bottom:9px; }
+  .cat-track > span{ display:block; height:100%; border-radius:999px; }
+  .cat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:6px 10px; font-size:12px; }
+  .cat-grid .lbl{ color:var(--muted); }
+  .cat-grid .v{ font-weight:700; text-align:right; }
+
+  .total-card{
+    background:#111827; color:#fff; border-radius:14px; padding:14px 15px; margin-top:2px;
+  }
+  .total-card .cat-name{ color:#fff; }
+  .total-card .cat-grid .lbl{ color:#9ca3af; }
+  .total-card .cat-grid .v{ color:#fde68a; }
+
+  /* Supplier list */
+  .sup-item{
+    display:flex; align-items:center; gap:10px;
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:10px 12px; margin-bottom:7px;
+  }
+  .sup-rank{
+    width:26px; height:26px; border-radius:8px; background:var(--accent); color:#fff;
+    font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .sup-name{ font-size:13px; font-weight:700; flex:1; min-width:0; overflow-wrap:anywhere; }
+  .sup-amount{ font-size:12.5px; font-weight:800; white-space:nowrap; }
+
+  /* Pareto */
+  .pareto-item{
+    display:flex; align-items:center; gap:10px;
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:10px 12px; margin-bottom:7px;
+  }
+  .pareto-tag{
+    width:32px; height:32px; border-radius:9px; color:#fff; font-weight:800; font-size:12px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .pareto-body{ flex:1; min-width:0; }
+  .pareto-body .row{ display:flex; justify-content:space-between; font-size:12px; margin-bottom:2px; }
+  .pareto-body .row .l{ color:var(--muted); }
+  .pareto-body .row .v{ font-weight:700; }
+
+  /* Insight list */
+  .insight-item{
+    display:flex; gap:8px; align-items:flex-start;
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:11px 13px; margin-bottom:7px; font-size:12.5px; line-height:1.5;
+  }
+  .insight-item .dot{ color:var(--accent); font-weight:900; }
+  .insight-item b{ display:block; font-size:13px; }
+
+  .empty{ text-align:center; color:var(--muted); font-size:12.5px; padding:20px 10px; }
+
+  details.collapse summary{
+    list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between;
+  }
+  details.collapse summary::-webkit-details-marker{ display:none; }
+  details.collapse summary .chev{ transition:transform .2s ease; color:var(--muted); font-size:12px; }
+  details.collapse[open] summary .chev{ transform:rotate(180deg); }
+
+  .footer{ text-align:center; font-size:11px; color:var(--muted); padding:16px 10px 4px; line-height:1.6; }
+
+  .loading-overlay{
+    position:fixed; inset:0; background:rgba(245,246,248,.9); display:none;
+    align-items:center; justify-content:center; z-index:50; font-size:13px; font-weight:600; color:var(--muted);
+  }
+  .loading-overlay.active{ display:flex; }
+</style>
 </head>
-<body data-theme="light">
-    <div class="container">
-        <section class="hero glass">
-            <div class="hero-top">
-                <div class="hero-brand hero-brand-compact">
-                    <div class="hero-brand-head">
-                        <img class="hero-brand-logo" src="logo-alpro.png" alt="Logo Alpro" loading="eager">
-                        <div class="hero-brand-title-wrap">
-                            <div class="hero-brand-kicker">Alpro Dashboard</div>
-                            <h1 class="hero-brand-title">Procurement Dashboard</h1>
-                        </div>
-                    </div>
-                    <div class="theme-switch-card">
-                        <div class="theme-switch-label">Theme Dashboard</div>
-                        <div class="theme-switch" role="tablist" aria-label="Theme dashboard">
-                            <button class="theme-option active" type="button" data-theme-option="light" onclick="setTheme('light')">☀️ Light</button>
-                            <button class="theme-option" type="button" data-theme-option="dark" onclick="setTheme('dark')">🌙 Dark</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="hero-badges">
-                    <div class="mini-panel">
-                        <div class="mini-panel-label">Top Supplier Receiving</div>
-                        <div class="mini-panel-value" id="heroTopSupplier">-</div>
-                    </div>
-                    <div class="mini-panel">
-                        <div class="mini-panel-label">Budget Health</div>
-                        <div class="mini-panel-value" id="heroBudgetHealth">-</div>
-                    </div>
-                    <div class="mini-panel">
-                        <div class="mini-panel-label">Kategori Aktif</div>
-                        <div class="mini-panel-value" id="heroActiveCategories">0</div>
-                    </div>
-                    <div class="mini-panel">
-                        <div class="mini-panel-label">Status Update</div>
-                        <div class="mini-panel-value" id="heroSyncStatus">Ready</div>
-                    </div>
-                </div>
-            </div>
+<body>
+<div class="loading-overlay" id="loading">⏳ Memuat data...</div>
 
-            <div class="top-strip">
-                <div class="top-strip-card">
-                    <div class="label">Total PO Issued</div>
-                    <div class="value" id="topIssued">Rp 0</div>
-                </div>
-                <div class="top-strip-card">
-                    <div class="label">Receiving Realization</div>
-                    <div class="value" id="topReceived">Rp 0</div>
-                </div>
-                <div class="top-strip-card">
-                    <div class="label">Kategori Warning</div>
-                    <div class="value" id="topWarningCategories">0 kategori</div>
-                </div>
-                <div class="top-strip-card">
-                    <div class="label">Kategori Over Budget</div>
-                    <div class="value" id="topOverBudget">0 kategori</div>
-                </div>
-            </div>
-        </section>
+<div class="wrap">
 
-        <section class="kpi-grid">
-            <div class="kpi-card glass">
-                <div class="kpi-icon">💰</div>
-                <div class="kpi-label">Total Budget</div>
-                <div class="kpi-value" id="kpiTotalBudget">Rp 0</div>
-                <div class="kpi-note"></div>
-            </div>
-            <div class="kpi-card glass">
-                <div class="kpi-icon">📥</div>
-                <div class="kpi-label">Total Receiving</div>
-                <div class="kpi-value" id="kpiTotalReceived">Rp 0</div>
-                <div class="kpi-note"></div>
-            </div>
-            <div class="kpi-card glass">
-                <div class="kpi-icon">📄</div>
-                <div class="kpi-label">Total PO Issued</div>
-                <div class="kpi-value" id="kpiTotalIssued">Rp 0</div>
-                <div class="kpi-note"></div>
-            </div>
-            <div class="kpi-card glass">
-                <div class="kpi-icon">🪙</div>
-                <div class="kpi-label">Sisa Budget</div>
-                <div class="kpi-value" id="kpiTotalRemaining">Rp 0</div>
-                <div class="kpi-note"></div>
-            </div>
-            <div class="kpi-card glass">
-                <div class="kpi-icon">⚡</div>
-                <div class="kpi-label">Usage Rate</div>
-                <div class="kpi-value" id="kpiUsageRate">0%</div>
-                <div class="kpi-note"></div>
-            </div>
-            <div class="kpi-card glass">
-                <div class="kpi-icon">🏆</div>
-                <div class="kpi-label">Top 5 Receiving Supplier</div>
-                <div class="kpi-value" id="kpiTop5Count">0</div>
-                <div class="kpi-note"></div>
-            </div>
-        </section>
-
-        <section class="controls glass">
-            <div class="controls-left">
-                <select class="field" id="categoryFilter" onchange="applyFilters()">
-                    <option value="ALL">Semua Kategori</option>
-                </select>
-                <select class="field" id="statusFilter" onchange="applyFilters()">
-                    <option value="ALL">Semua Status</option>
-                    <option value="OK">OK / Healthy</option>
-                    <option value="WARNING">Warning</option>
-                    <option value="OVER">Over Budget</option>
-                </select>
-                <input class="field" id="searchInput" type="text" placeholder="Cari category..." oninput="applyFilters()">
-            </div>
-            <div class="controls-right">
-                <button class="btn btn-secondary" onclick="resetFilters()">Reset Filter</button>
-                <button class="btn btn-primary" onclick="loadDashboard()">🔄 Refresh Dashboard</button>
-                <div class="last-updated" id="lastUpdated">Terakhir update: -</div>
-            </div>
-        </section>
-
-        <div class="loading" id="loading">⏳ Memuat data dashboard procurement...</div>
-
-        <section class="alert-strip">
-            <div class="health-card glass">
-                <div class="section-title">
-                    <h2>Budget Health Monitor</h2>
-                    <div class="status-pill healthy" id="budgetHealthPill">HEALTHY</div>
-                </div>
-                <div class="health-content">
-                    <div>
-                        <div class="health-value" id="healthUsageRate">0%</div>
-                        <div class="health-copy" id="healthDescription">
-                            Budget utilization masih dalam kondisi aman dan terkontrol.
-                        </div>
-                        <div class="progress-wrap">
-                            <div class="progress-meta">
-                                <span>Utilization Progress</span>
-                                <span id="progressText">0%</span>
-                            </div>
-                            <div class="progress-bar"><span id="usageProgressBar"></span></div>
-                        </div>
-                    </div>
-                    <div class="health-metrics">
-                        <div class="health-stat">
-                            <div class="small-label">Kategori Healthy</div>
-                            <div class="small-value" id="healthyCount">0</div>
-                        </div>
-                        <div class="health-stat">
-                            <div class="small-label">Kategori Warning</div>
-                            <div class="small-value" id="warningCount">0</div>
-                        </div>
-                        <div class="health-stat">
-                            <div class="small-label">Kategori Over Budget</div>
-                            <div class="small-value" id="overBudgetCount">0</div>
-                        </div>
-                        <div class="health-stat">
-                            <div class="small-label">Total Kategori</div>
-                            <div class="small-value" id="totalCategoryCount">0</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="insight-card glass">
-                <div class="section-title">
-                    <h2>Management Insights</h2>
-                </div>
-                <ul class="insight-list" id="insightList">
-                    <li><span>•</span> Insight dashboard akan muncul setelah data berhasil dimuat.</li>
-                </ul>
-            </div>
-        </section>
-
-        <section class="content-grid">
-            <div class="panel glass table-panel">
-                <div class="table-toolbar">
-                    <div>
-                        <div class="section-title" style="margin-bottom: 6px;">
-                            <h2>Budget Tracking by Category</h2>
-                        </div>
-
-                    </div>
-                    <div class="badge badge-ok" id="visibleRowsBadge">0 kategori tampil</div>
-                </div>
-                <div class="table-wrap">
-                    <table id="trackingTable">
-                        <thead>
-                            <tr>
-                                <th>Category</th>
-                                <th>PO Issued</th>
-                                <th>PO Received</th>
-                                <th>Budget</th>
-                                <th>Sisa Budget</th>
-                                <th>% Used</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="panel glass table-panel">
-                <div class="table-toolbar">
-                    <div>
-                        <div class="section-title" style="margin-bottom: 6px;">
-                            <h2>PO Issued &amp; Receiving by Pareto</h2>
-                        </div>
-                        <div class="table-subtitle">Rekapitulasi nilai PO Issued dan Receiving berdasarkan grup Pareto</div>
-                    </div>
-                    <div class="badge badge-warning" id="paretoRowsBadge">0 grup pareto</div>
-                </div>
-                <div class="table-wrap">
-                    <table id="paretoTable">
-                        <thead>
-                            <tr>
-                                <th>Pareto</th>
-                                <th>PO Issued</th>
-                                <th>PO Received</th>
-                                <th>% Issued</th>
-                                <th>% Received</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="panel glass supplier-panel">
-                <div class="section-title">
-                    <h2>Supplier Leaderboard</h2>
-                    <div class="badge badge-warning">Receiving &amp; PO Issued</div>
-                </div>
-                <div class="supplier-summary-grid">
-                    <div class="supplier-card-block">
-                        <div class="supplier-card-head">
-                            <h3>Top 5 Supplier Receiving</h3>
-                            <div class="badge badge-warning">Receiving</div>
-                        </div>
-                        <div class="supplier-list" id="supplierList">
-                            <div class="empty-state">Belum ada data supplier receiving.</div>
-                        </div>
-                    </div>
-                    <div class="supplier-card-block">
-                        <div class="supplier-card-head">
-                            <h3>Top 5 Supplier PO Issued</h3>
-                            <div class="badge badge-ok">PO Issued</div>
-                        </div>
-                        <div class="supplier-list" id="supplierIssuedList">
-                            <div class="empty-state">Belum ada data supplier PO Issued.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="chart-grid">
-            <div class="chart-panel glass">
-                <div class="section-title">
-                    <h2>Budget vs Receiving per Category</h2>
-                    <div class="badge badge-ok">Comparison</div>
-                </div>
-                <div class="chart-holder">
-                    <canvas id="budgetChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-panel glass">
-                <div class="section-title">
-                    <h2>Top 5 Supplier by Receiving</h2>
-                    <div class="badge badge-warning">Top Supplier</div>
-                </div>
-                <div class="chart-holder">
-                    <canvas id="supplierChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-panel glass">
-                <div class="section-title">
-                    <h2>Top 5 Supplier by PO Issued</h2>
-                    <div class="badge badge-ok">Commitment View</div>
-                </div>
-                <div class="chart-holder">
-                    <canvas id="supplierIssuedChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-panel glass">
-                <div class="section-title">
-                    <h2>Status Distribution</h2>
-                    <div class="badge badge-over">Risk View</div>
-                </div>
-                <div class="chart-holder">
-                    <canvas id="statusChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-panel glass">
-                <div class="section-title">
-                    <h2>Top 5 Category by Receiving</h2>
-                    <div class="badge badge-ok">Priority Spend</div>
-                </div>
-                <div class="chart-holder">
-                    <canvas id="categoryChart"></canvas>
-                </div>
-            </div>
-        </section>
-
-        <div class="footer glass">
-            © 2026 Procurement Dashboard Aurora Luxe · Dibuat untuk monitoring budget, supplier receiving, supplier PO Issued, dan pengambilan keputusan yang lebih cepat.
-        </div>
+  <div class="topbar">
+    <div class="brand">
+      <img src="logo-alpro.png" alt="Logo Alpro" onerror="this.style.display='none'">
+      <div class="brand-text">
+        <div class="k">ALPRO DASHBOARD</div>
+        <div class="t">Procurement Mobile</div>
+      </div>
     </div>
-
-    <script>
-        const PROCUREMENT_API_URL = 'https://script.google.com/macros/s/AKfycbymp0rM8EaO7nGVYjdzj-f_6IoFqRMudK78v1sdUJGSfD6-UyFcRiim0PrwGU3_Npqm/exec';
-
-        let rawTrackingData = [];
-        let filteredTrackingData = [];
-        let supplierData = [];
-        let supplierIssuedData = [];
-        let analyticsData = null;
-        let rawReceivingData = [];
-        let rawIssuedData = [];
-
-        let budgetChart = null;
-        let supplierChart = null;
-        let supplierIssuedChart = null;
-        let statusChart = null;
-        let categoryChart = null;
-
-        function getCurrentTheme() {
-            return document.body.getAttribute('data-theme') || 'light';
-        }
-
-        function applyTheme(theme = 'light') {
-            document.body.setAttribute('data-theme', theme);
-            document.querySelectorAll('[data-theme-option]').forEach(button => {
-                button.classList.toggle('active', button.dataset.themeOption === theme);
-            });
-        }
-
-        function setTheme(theme) {
-            applyTheme(theme === 'dark' ? 'dark' : 'light');
-            try {
-                localStorage.setItem('procurementDashboardTheme', getCurrentTheme());
-            } catch (error) {
-                console.warn('Theme preference tidak dapat disimpan.', error);
-            }
-            refreshVisualTheme();
-        }
-
-        function loadSavedTheme() {
-            let savedTheme = 'light';
-            try {
-                savedTheme = localStorage.getItem('procurementDashboardTheme') || 'light';
-            } catch (error) {
-                console.warn('Theme preference tidak dapat dibaca.', error);
-            }
-            applyTheme(savedTheme === 'dark' ? 'dark' : 'light');
-        }
-
-        function refreshVisualTheme() {
-            if (!rawTrackingData.length || !analyticsData) return;
-            renderBudgetChart(filteredTrackingData);
-            renderSupplierChart(supplierData);
-            renderSupplierIssuedChart(supplierIssuedData);
-            renderStatusChart(filteredTrackingData);
-            renderCategoryChart(analyticsData);
-        }
-
-        function getChartThemePalette() {
-            if (getCurrentTheme() === 'dark') {
-                return {
-                    text: '#e2e8f0',
-                    muted: '#94a3b8',
-                    grid: 'rgba(148, 163, 184, 0.16)',
-                    tooltipBg: 'rgba(15, 23, 42, 0.96)',
-                    tooltipBorder: 'rgba(255,255,255,0.12)',
-                    tooltipTitle: '#f8fafc',
-                    tooltipBody: '#cbd5e1',
-                    doughnutBorder: '#0b1220',
-                    linePointBorder: '#0b1220'
-                };
-            }
-
-            return {
-                text: '#334155',
-                muted: '#64748b',
-                grid: 'rgba(148, 163, 184, 0.18)',
-                tooltipBg: 'rgba(255,255,255,0.96)',
-                tooltipBorder: 'rgba(99,102,241,0.18)',
-                tooltipTitle: '#0f172a',
-                tooltipBody: '#334155',
-                doughnutBorder: '#ffffff',
-                linePointBorder: '#0f0f13'
-            };
-        }
-
-        function formatCurrency(value) {
-            return 'Rp ' + new Intl.NumberFormat('id-ID', {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(Number(value) || 0);
-        }
-
-        function formatNumber(value) {
-            return new Intl.NumberFormat('id-ID', {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(Number(value) || 0);
-        }
-
-        function formatPercent(value) {
-            return `${Number(value || 0).toFixed(1)}%`;
-        }
-
-        function normalizeStatus(item) {
-            const used = Number(item['% Used']) || 0;
-            const rawStatus = String(item['Status'] || '').toLowerCase();
-
-            if (rawStatus.includes('over') || used > 100) {
-                return 'OVER';
-            }
-            if (used >= 80) {
-                return 'WARNING';
-            }
-            return 'OK';
-        }
-
-        function getStatusBadge(status) {
-            if (status === 'OVER') {
-                return '<span class="badge badge-over">Over Budget</span>';
-            }
-            if (status === 'WARNING') {
-                return '<span class="badge badge-warning">Warning</span>';
-            }
-            return '<span class="badge badge-ok">On Track</span>';
-        }
-
-        function getUsageBarColor(used) {
-            if (used > 100) return 'linear-gradient(90deg, #f97316, #ef4444)';
-            if (used >= 80) return 'linear-gradient(90deg, #fbbf24, #f59e0b)';
-            return 'linear-gradient(90deg, #34d399, #10b981)';
-        }
-
-        function computeFallbackAnalytics(tracking, suppliers, suppliersIssued = []) {
-            const cleanRows = tracking.filter(item => item['Category'] !== 'GRAND TOTAL');
-            const totals = cleanRows.reduce((acc, item) => {
-                acc.totalBudget += Number(item['Budget']) || 0;
-                acc.totalIssued += Number(item['PO Issued']) || 0;
-                acc.totalReceived += Number(item['PO Received']) || 0;
-                acc.totalRemaining += Number(item['Sisa Budget']) || 0;
-                return acc;
-            }, {
-                totalBudget: 0,
-                totalIssued: 0,
-                totalReceived: 0,
-                totalRemaining: 0
-            });
-
-            const categoryHealth = cleanRows.reduce((acc, item) => {
-                const status = normalizeStatus(item);
-                if (status === 'OVER') acc.overBudget += 1;
-                else if (status === 'WARNING') acc.warning += 1;
-                else acc.healthy += 1;
-                acc.total += 1;
-                return acc;
-            }, { total: 0, healthy: 0, warning: 0, overBudget: 0 });
-
-            const usageRate = totals.totalBudget > 0 ? ((totals.totalReceived / totals.totalBudget) * 100) : 0;
-            const topCategoriesByReceiving = [...cleanRows]
-                .sort((a, b) => (Number(b['PO Received']) || 0) - (Number(a['PO Received']) || 0))
-                .slice(0, 5)
-                .map(item => ({
-                    category: item['Category'],
-                    received: Number(item['PO Received']) || 0,
-                    budget: Number(item['Budget']) || 0,
-                    usedPercent: Number(item['% Used']) || 0
-                }));
-
-            const topSuppliersReceiving = [...suppliers]
-                .sort((a, b) => (Number(b.totalSpent) || 0) - (Number(a.totalSpent) || 0))
-                .slice(0, 5);
-
-            const topSuppliersIssued = [...suppliersIssued]
-                .sort((a, b) => (Number(b.totalSpent) || 0) - (Number(a.totalSpent) || 0))
-                .slice(0, 5);
-
-            let budgetHealthLabel = 'Healthy';
-            if (usageRate > 100 || categoryHealth.overBudget > 0) budgetHealthLabel = 'Critical';
-            else if (usageRate >= 80 || categoryHealth.warning > 0) budgetHealthLabel = 'Watchlist';
-
-            return {
-                totals: {
-                    ...totals,
-                    usageRate: Number(usageRate.toFixed(2))
-                },
-                categoryHealth,
-                topCategoriesByReceiving,
-                topSuppliersReceiving,
-                topSuppliersIssued,
-                budgetHealthLabel,
-                insights: [
-                    `Total kategori aktif: ${categoryHealth.total}`,
-                    `Kategori over budget: ${categoryHealth.overBudget}`,
-                    `Kategori warning (>=80%): ${categoryHealth.warning}`,
-                    topCategoriesByReceiving[0] ? `Receiving tertinggi: ${topCategoriesByReceiving[0].category}` : 'Receiving tertinggi: Belum ada data',
-                    topSuppliersReceiving[0] ? `Supplier receiving terbesar: ${topSuppliersReceiving[0].supplier}` : 'Supplier receiving terbesar: Belum ada data',
-                    topSuppliersIssued[0] ? `Supplier PO Issued terbesar: ${topSuppliersIssued[0].supplier}` : 'Supplier PO Issued terbesar: Belum ada data'
-                ]
-            };
-        }
-
-        function setHeroData(analytics) {
-            const topSupplier = analytics.topSuppliersReceiving?.[0]?.supplier || '-';
-            document.getElementById('heroTopSupplier').textContent = topSupplier;
-            document.getElementById('heroBudgetHealth').textContent = analytics.budgetHealthLabel || '-';
-            document.getElementById('heroActiveCategories').textContent = analytics.categoryHealth?.total || 0;
-            document.getElementById('heroSyncStatus').textContent = 'Synced';
-
-            document.getElementById('topIssued').textContent = formatCurrency(analytics.totals?.totalIssued || 0);
-            document.getElementById('topReceived').textContent = formatCurrency(analytics.totals?.totalReceived || 0);
-            document.getElementById('topWarningCategories').textContent = `${analytics.categoryHealth?.warning || 0} kategori`;
-            document.getElementById('topOverBudget').textContent = `${analytics.categoryHealth?.overBudget || 0} kategori`;
-        }
-
-        function setKpiData(analytics) {
-            document.getElementById('kpiTotalBudget').textContent = formatCurrency(analytics.totals?.totalBudget || 0);
-            document.getElementById('kpiTotalReceived').textContent = formatCurrency(analytics.totals?.totalReceived || 0);
-            document.getElementById('kpiTotalIssued').textContent = formatCurrency(analytics.totals?.totalIssued || 0);
-            document.getElementById('kpiTotalRemaining').textContent = formatCurrency(analytics.totals?.totalRemaining || 0);
-            document.getElementById('kpiUsageRate').textContent = formatPercent(analytics.totals?.usageRate || 0);
-            document.getElementById('kpiTop5Count').textContent = analytics.topSuppliersReceiving?.length || 0;
-        }
-
-        function setHealthPanel(analytics) {
-            const label = String(analytics.budgetHealthLabel || 'Healthy');
-            const pill = document.getElementById('budgetHealthPill');
-            const usageRate = Number(analytics.totals?.usageRate || 0);
-
-            pill.textContent = label.toUpperCase();
-            pill.className = 'status-pill';
-            if (label.toLowerCase() === 'critical') pill.classList.add('critical');
-            else if (label.toLowerCase() === 'watchlist') pill.classList.add('watchlist');
-            else pill.classList.add('healthy');
-
-            document.getElementById('healthUsageRate').textContent = formatPercent(usageRate);
-            document.getElementById('progressText').textContent = formatPercent(usageRate);
-            document.getElementById('usageProgressBar').style.width = `${Math.min(usageRate, 100)}%`;
-
-            let description = 'Budget utilization masih aman dan stabil.';
-            if (label.toLowerCase() === 'critical') {
-                description = 'Ada indikasi over budget atau utilization sudah terlalu tinggi. Perlu tindak lanjut cepat pada category yang paling agresif.';
-            } else if (label.toLowerCase() === 'watchlist') {
-                description = 'Beberapa category mulai mendekati batas aman budget. Disarankan monitoring lebih ketat pada receiving berikutnya.';
-            }
-            document.getElementById('healthDescription').textContent = description;
-
-            document.getElementById('healthyCount').textContent = analytics.categoryHealth?.healthy || 0;
-            document.getElementById('warningCount').textContent = analytics.categoryHealth?.warning || 0;
-            document.getElementById('overBudgetCount').textContent = analytics.categoryHealth?.overBudget || 0;
-            document.getElementById('totalCategoryCount').textContent = analytics.categoryHealth?.total || 0;
-        }
-
-        function setInsights(analytics) {
-            const insightList = document.getElementById('insightList');
-            const insights = Array.isArray(analytics.insights) && analytics.insights.length
-                ? analytics.insights
-                : ['Belum ada insight yang dapat ditampilkan.'];
-
-            insightList.innerHTML = insights.map(item => {
-                const parts = String(item).split(':');
-                if (parts.length > 1) {
-                    const label = `${parts.shift().trim()}:`;
-                    const value = parts.join(':').trim();
-                    return `
-                        <li>
-                            <span>•</span>
-                            <div class="insight-text">
-                                <span class="insight-label">${label}</span>
-                                <strong class="insight-value">${value}</strong>
-                            </div>
-                        </li>
-                    `;
-                }
-
-                return `
-                    <li>
-                        <span>•</span>
-                        <div class="insight-text">
-                            <span class="insight-label">${item}</span>
-                        </div>
-                    </li>
-                `;
-            }).join('');
-        }
-
-        function renderTable(data) {
-            const tbody = document.querySelector('#trackingTable tbody');
-            const rows = [];
-
-            let totalIssued = 0;
-            let totalReceived = 0;
-            let totalBudget = 0;
-            let totalRemaining = 0;
-            let visibleCount = 0;
-
-            data.forEach(item => {
-                if (item['Category'] === 'GRAND TOTAL') return;
-
-                visibleCount += 1;
-                const issued = Number(item['PO Issued']) || 0;
-                const received = Number(item['PO Received']) || 0;
-                const budget = Number(item['Budget']) || 0;
-                const remaining = Number(item['Sisa Budget']) || 0;
-                const used = Number(item['% Used']) || 0;
-                const status = normalizeStatus(item);
-                const usageWidth = Math.min(used, 100);
-
-                totalIssued += issued;
-                totalReceived += received;
-                totalBudget += budget;
-                totalRemaining += remaining;
-
-                rows.push(`
-                    <tr>
-                        <td>
-                            <div class="category-cell">
-                                <div class="category-name">${item['Category']}</div>
-                                <div class="usage-track">
-                                    <span style="width:${usageWidth}%; background:${getUsageBarColor(used)};"></span>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="num">${formatCurrency(issued)}</td>
-                        <td class="num">${formatCurrency(received)}</td>
-                        <td class="num">${formatCurrency(budget)}</td>
-                        <td class="num">${formatCurrency(remaining)}</td>
-                        <td class="num used-percent">${formatPercent(used)}</td>
-                        <td>${getStatusBadge(status)}</td>
-                    </tr>
-                `);
-            });
-
-            const totalPercent = totalBudget > 0 ? (totalReceived / totalBudget) * 100 : 0;
-            rows.push(`
-                <tr class="total-row">
-                    <td><strong>📊 GRAND TOTAL</strong></td>
-                    <td class="num">${formatCurrency(totalIssued)}</td>
-                    <td class="num">${formatCurrency(totalReceived)}</td>
-                    <td class="num">${formatCurrency(totalBudget)}</td>
-                    <td class="num">${formatCurrency(totalRemaining)}</td>
-                    <td class="num used-percent">${formatPercent(totalPercent)}</td>
-                    <td>${getStatusBadge(totalPercent > 100 ? 'OVER' : totalPercent >= 80 ? 'WARNING' : 'OK')}</td>
-                </tr>
-            `);
-
-            tbody.innerHTML = rows.join('');
-            document.getElementById('visibleRowsBadge').textContent = `${visibleCount} kategori tampil`;
-        }
-
-        function renderSupplierList(list, containerId = 'supplierList', captionText = 'Ranking berdasarkan total nilai receiving', emptyMessage = 'Data supplier receiving belum tersedia.') {
-            const container = document.getElementById(containerId);
-            if (!list.length) {
-                container.innerHTML = `<div class="empty-state">${emptyMessage}</div>`;
-                return;
-            }
-
-            container.innerHTML = list.map((item, index) => `
-                <div class="supplier-item">
-                    <div class="supplier-rank">${index + 1}</div>
-                    <div>
-                        <div class="supplier-name">${item.supplier}</div>
-                        <div class="supplier-caption">${captionText}</div>
-                    </div>
-                    <div class="supplier-amount">${formatCurrency(item.totalSpent)}</div>
-                </div>
-            `).join('');
-        }
-
-        function baseChartOptions() {
-            const palette = getChartThemePalette();
-
-            return {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: palette.text,
-                            font: {
-                                family: 'Inter',
-                                weight: '700'
-                            }
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: palette.tooltipBg,
-                        borderColor: palette.tooltipBorder,
-                        borderWidth: 1,
-                        titleColor: palette.tooltipTitle,
-                        bodyColor: palette.tooltipBody,
-                        padding: 12,
-                        callbacks: {
-                            label(context) {
-                                const value = context.raw;
-                                if (typeof value === 'number') {
-                                    return `${context.dataset.label}: ${formatCurrency(value)}`;
-                                }
-                                return `${context.dataset.label}: ${value}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: { color: palette.muted },
-                        grid: { color: palette.grid }
-                    },
-                    y: {
-                        ticks: {
-                            color: palette.muted,
-                            callback: value => formatCurrency(value)
-                        },
-                        grid: { color: palette.grid }
-                    }
-                }
-            };
-        }
-
-        function renderBudgetChart(data) {
-            const ctx = document.getElementById('budgetChart').getContext('2d');
-            if (budgetChart) budgetChart.destroy();
-
-            const cleanRows = data.filter(item => item['Category'] !== 'GRAND TOTAL');
-
-            budgetChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: cleanRows.map(item => item['Category']),
-                    datasets: [
-                        {
-                            label: 'Budget',
-                            data: cleanRows.map(item => Number(item['Budget']) || 0),
-                            backgroundColor: 'rgba(251, 191, 36, 0.35)',
-                            borderColor: 'rgba(251, 191, 36, 1)',
-                            borderWidth: 1.6,
-                            borderRadius: 10
-                        },
-                        {
-                            label: 'PO Received',
-                            data: cleanRows.map(item => Number(item['PO Received']) || 0),
-                            backgroundColor: 'rgba(56, 189, 248, 0.32)',
-                            borderColor: 'rgba(56, 189, 248, 1)',
-                            borderWidth: 1.6,
-                            borderRadius: 10
-                        }
-                    ]
-                },
-                options: baseChartOptions()
-            });
-        }
-
-        function createSupplierHorizontalChart(canvasId, currentChart, list, label, colors) {
-            const ctx = document.getElementById(canvasId).getContext('2d');
-            if (currentChart) currentChart.destroy();
-
-            return new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: list.map(item => item.supplier),
-                    datasets: [{
-                        label,
-                        data: list.map(item => Number(item.totalSpent) || 0),
-                        backgroundColor: colors,
-                        borderRadius: 12,
-                        borderSkipped: false
-                    }]
-                },
-                options: {
-                    ...baseChartOptions(),
-                    indexAxis: 'y',
-                    plugins: {
-                        ...baseChartOptions().plugins,
-                        legend: { display: false }
-                    }
-                }
-            });
-        }
-
-        function renderSupplierChart(list) {
-            supplierChart = createSupplierHorizontalChart(
-                'supplierChart',
-                supplierChart,
-                list,
-                'Nilai Receiving',
-                [
-                    'rgba(251, 191, 36, 0.85)',
-                    'rgba(245, 158, 11, 0.85)',
-                    'rgba(139, 92, 246, 0.85)',
-                    'rgba(56, 189, 248, 0.85)',
-                    'rgba(16, 185, 129, 0.85)'
-                ]
-            );
-        }
-
-        function renderSupplierIssuedChart(list) {
-            supplierIssuedChart = createSupplierHorizontalChart(
-                'supplierIssuedChart',
-                supplierIssuedChart,
-                list,
-                'Nilai PO Issued',
-                [
-                    'rgba(34, 211, 238, 0.88)',
-                    'rgba(59, 130, 246, 0.85)',
-                    'rgba(168, 85, 247, 0.85)',
-                    'rgba(244, 114, 182, 0.85)',
-                    'rgba(251, 191, 36, 0.85)'
-                ]
-            );
-        }
-
-        function renderStatusChart(data) {
-            const ctx = document.getElementById('statusChart').getContext('2d');
-            if (statusChart) statusChart.destroy();
-
-            const palette = getChartThemePalette();
-            const cleanRows = data.filter(item => item['Category'] !== 'GRAND TOTAL');
-            const counts = { OK: 0, WARNING: 0, OVER: 0 };
-            cleanRows.forEach(item => counts[normalizeStatus(item)] += 1);
-
-            statusChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Healthy', 'Warning', 'Over Budget'],
-                    datasets: [{
-                        data: [counts.OK, counts.WARNING, counts.OVER],
-                        backgroundColor: [
-                            'rgba(16, 185, 129, 0.85)',
-                            'rgba(245, 158, 11, 0.85)',
-                            'rgba(239, 68, 68, 0.85)'
-                        ],
-                        borderColor: palette.doughnutBorder,
-                        borderWidth: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '64%',
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                color: palette.text,
-                                font: { family: 'Inter', weight: '700' }
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: palette.tooltipBg,
-                            borderColor: palette.tooltipBorder,
-                            borderWidth: 1,
-                            titleColor: palette.tooltipTitle,
-                            bodyColor: palette.tooltipBody
-                        }
-                    }
-                }
-            });
-        }
-
-        function renderCategoryChart(analytics) {
-            const ctx = document.getElementById('categoryChart').getContext('2d');
-            if (categoryChart) categoryChart.destroy();
-
-            const categories = analytics.topCategoriesByReceiving || [];
-            categoryChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: categories.map(item => item.category),
-                    datasets: [{
-                        label: 'Receiving',
-                        data: categories.map(item => Number(item.received) || 0),
-                        fill: true,
-                        tension: 0.35,
-                        borderColor: 'rgba(139, 92, 246, 1)',
-                        backgroundColor: 'rgba(139, 92, 246, 0.2)',
-                        pointBackgroundColor: 'rgba(251, 191, 36, 1)',
-                        pointBorderColor: getChartThemePalette().linePointBorder,
-                        pointBorderWidth: 2,
-                        pointRadius: 5
-                    }]
-                },
-                options: baseChartOptions()
-            });
-        }
-
-        function renderParetoTable(issuedData, receivingData) {
-            const tbody = document.querySelector('#paretoTable tbody');
-            const paretoOrder = ['A', 'AA', 'B', 'C', 'D', 'E', 'F', 'NEW'];
-
-            // Group PO Issued by Pareto
-            const issuedGrouped = {};
-            issuedData.forEach(item => {
-                if (!item['Pareto'] || String(item['Pareto']).trim() === '') return;
-                const pareto = String(item['Pareto']).trim();
-                const nilai = Number(item['Nilai PO']) || Number(item['PO Issued']) || 0;
-                issuedGrouped[pareto] = (issuedGrouped[pareto] || 0) + nilai;
-            });
-
-            // Group Receiving by Pareto
-            const receivingGrouped = {};
-            receivingData.forEach(item => {
-                if (!item['Pareto'] || String(item['Pareto']).trim() === '') return;
-                const pareto = String(item['Pareto']).trim();
-                const nilai = Number(item['Nilai Received']) || Number(item['Nilai Receive']) || Number(item['PO Received']) || 0;
-                receivingGrouped[pareto] = (receivingGrouped[pareto] || 0) + nilai;
-            });
-
-            // Merge all keys
-            const allPareto = [...new Set([...Object.keys(issuedGrouped), ...Object.keys(receivingGrouped)])];
-            const sorted = allPareto.sort((a, b) => {
-                const ia = paretoOrder.indexOf(a.toUpperCase());
-                const ib = paretoOrder.indexOf(b.toUpperCase());
-                if (ia === -1 && ib === -1) return a.localeCompare(b);
-                if (ia === -1) return 1;
-                if (ib === -1) return -1;
-                return ia - ib;
-            });
-
-            if (!sorted.length) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">Data Pareto belum tersedia. Kirimkan Apps Script agar data terbaca.</td></tr>';
-                document.getElementById('paretoRowsBadge').textContent = '0 grup pareto';
-                return;
-            }
-
-            const totalIssued = Object.values(issuedGrouped).reduce((s, v) => s + v, 0);
-            const totalReceived = Object.values(receivingGrouped).reduce((s, v) => s + v, 0);
-
-            const paretoColorMap = {
-                'A': '#8b5cf6', 'AA': '#6366f1', 'B': '#0ea5e9',
-                'C': '#10b981', 'D': '#f59e0b', 'E': '#f97316',
-                'F': '#ef4444', 'NEW': '#ec4899'
-            };
-            const fallbackColors = ['#8b5cf6','#ec4899','#f59e0b','#10b981','#0ea5e9'];
-
-            const rows = sorted.map((pareto, i) => {
-                const issued = issuedGrouped[pareto] || 0;
-                const received = receivingGrouped[pareto] || 0;
-                const pctIssued = totalIssued > 0 ? ((issued / totalIssued) * 100).toFixed(1) : '0.0';
-                const pctReceived = totalReceived > 0 ? ((received / totalReceived) * 100).toFixed(1) : '0.0';
-                const color = paretoColorMap[pareto.toUpperCase()] || fallbackColors[i % fallbackColors.length];
-
-                return `
-                    <tr>
-                        <td>
-                            <div style="display:flex;align-items:center;gap:10px;">
-                                <span style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:12px;font-weight:900;font-size:13px;color:#fff;background:${color};flex-shrink:0;">${pareto}</span>
-                                <span class="category-name">Pareto ${pareto}</span>
-                            </div>
-                        </td>
-                        <td class="num">${formatCurrency(issued)}</td>
-                        <td class="num">${formatCurrency(received)}</td>
-                        <td class="num">
-                            <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
-                                <span>${pctIssued}%</span>
-                                <div class="usage-track" style="width:80px;">
-                                    <span style="width:${Math.min(parseFloat(pctIssued),100)}%;background:${color};opacity:0.75;"></span>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="num">
-                            <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
-                                <span>${pctReceived}%</span>
-                                <div class="usage-track" style="width:80px;">
-                                    <span style="width:${Math.min(parseFloat(pctReceived),100)}%;background:${color};opacity:0.75;"></span>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            // Grand total row
-            rows.push(`
-                <tr class="total-row">
-                    <td><strong>📊 GRAND TOTAL</strong></td>
-                    <td class="num">${formatCurrency(totalIssued)}</td>
-                    <td class="num">${formatCurrency(totalReceived)}</td>
-                    <td class="num">100%</td>
-                    <td class="num">100%</td>
-                </tr>
-            `);
-
-            tbody.innerHTML = rows.join('');
-            document.getElementById('paretoRowsBadge').textContent = `${sorted.length} grup pareto`;
-        }
-
-        function populateCategoryFilter(data) {
-            const categories = ['ALL', ...new Set(
-                data
-                    .filter(item => item['Category'] !== 'GRAND TOTAL')
-                    .map(item => item['Category'])
-            )];
-
-            document.getElementById('categoryFilter').innerHTML = categories
-                .map(item => `<option value="${item}">${item === 'ALL' ? 'Semua Kategori' : item}</option>`)
-                .join('');
-        }
-
-        function applyFilters() {
-            const category = document.getElementById('categoryFilter').value;
-            const status = document.getElementById('statusFilter').value;
-            const search = document.getElementById('searchInput').value.trim().toLowerCase();
-
-            filteredTrackingData = rawTrackingData.filter(item => item['Category'] !== 'GRAND TOTAL').filter(item => {
-                const matchCategory = category === 'ALL' || item['Category'] === category;
-                const matchStatus = status === 'ALL' || normalizeStatus(item) === status;
-                const matchSearch = !search || String(item['Category']).toLowerCase().includes(search);
-                return matchCategory && matchStatus && matchSearch;
-            });
-
-            renderTable(filteredTrackingData);
-            renderBudgetChart(filteredTrackingData);
-            renderStatusChart(filteredTrackingData);
-            renderParetoTable(
-                rawIssuedData.length ? rawIssuedData : filteredTrackingData,
-                rawReceivingData.length ? rawReceivingData : filteredTrackingData
-            );
-        }
-
-        function resetFilters() {
-            document.getElementById('categoryFilter').value = 'ALL';
-            document.getElementById('statusFilter').value = 'ALL';
-            document.getElementById('searchInput').value = '';
-            applyFilters();
-        }
-
-        async function loadDashboard() {
-            const loadingEl = document.getElementById('loading');
-            try {
-                loadingEl.classList.add('active');
-                document.getElementById('heroSyncStatus').textContent = 'Loading';
-
-                const response = await fetch(PROCUREMENT_API_URL);
-                if (!response.ok) throw new Error('Gagal mengambil data dari web app');
-
-                const result = await response.json();
-                if (result.error) throw new Error(result.error);
-
-                rawTrackingData = Array.isArray(result.tracking) ? result.tracking : [];
-                supplierData = Array.isArray(result.topSuppliersReceiving) && result.topSuppliersReceiving.length
-                    ? result.topSuppliersReceiving
-                    : (Array.isArray(result.suppliers) ? [...result.suppliers].slice(0, 5) : []);
-                supplierIssuedData = Array.isArray(result.topSuppliersIssued) && result.topSuppliersIssued.length
-                    ? result.topSuppliersIssued
-                    : (result.analytics?.topSuppliersIssued?.length ? result.analytics.topSuppliersIssued : (Array.isArray(result.suppliersIssued) ? [...result.suppliersIssued].slice(0, 5) : []));
-                analyticsData = result.analytics && Object.keys(result.analytics).length
-                    ? result.analytics
-                    : computeFallbackAnalytics(
-                        rawTrackingData,
-                        Array.isArray(result.suppliers) ? result.suppliers : supplierData,
-                        Array.isArray(result.suppliersIssued) ? result.suppliersIssued : supplierIssuedData
-                    );
-
-                // Raw sheet data for Pareto charts (field: 'Pareto', 'Nilai Received' / 'Nilai PO')
-                rawReceivingData = Array.isArray(result.receiving) ? result.receiving
-                    : Array.isArray(result.rawReceiving) ? result.rawReceiving
-                    : Array.isArray(result.poReceived) ? result.poReceived : [];
-                rawIssuedData = Array.isArray(result.issued) ? result.issued
-                    : Array.isArray(result.rawIssued) ? result.rawIssued
-                    : Array.isArray(result.poIssued) ? result.poIssued : [];
-
-                populateCategoryFilter(rawTrackingData);
-                filteredTrackingData = rawTrackingData.filter(item => item['Category'] !== 'GRAND TOTAL');
-
-                setHeroData(analyticsData);
-                setKpiData(analyticsData);
-                setHealthPanel(analyticsData);
-                setInsights(analyticsData);
-                renderSupplierList(supplierData, 'supplierList', 'Ranking berdasarkan total nilai receiving', 'Data supplier receiving belum tersedia.');
-                renderSupplierList(supplierIssuedData, 'supplierIssuedList', 'Ranking berdasarkan total nilai PO Issued', 'Data supplier PO Issued belum tersedia.');
-                renderTable(filteredTrackingData);
-                renderBudgetChart(filteredTrackingData);
-                renderSupplierChart(supplierData);
-                renderSupplierIssuedChart(supplierIssuedData);
-                renderStatusChart(filteredTrackingData);
-                renderCategoryChart(analyticsData);
-                // Use raw sheet data for Pareto if available, else fallback to tracking data
-                renderParetoTable(
-                    rawIssuedData.length ? rawIssuedData : filteredTrackingData,
-                    rawReceivingData.length ? rawReceivingData : filteredTrackingData
-                );
-
-                document.getElementById('lastUpdated').textContent = 'Terakhir update: ' + new Date().toLocaleString('id-ID');
-                document.getElementById('heroSyncStatus').textContent = 'Synced';
-            } catch (error) {
-                console.error(error);
-                document.getElementById('heroSyncStatus').textContent = 'Failed';
-                alert('⚠️ ' + error.message + '\n\nPastikan URL Web App benar dan sudah di-deploy sebagai Anyone.');
-            } finally {
-                loadingEl.classList.remove('active');
-            }
-        }
-
-        window.addEventListener('load', () => {
-            loadSavedTheme();
-            loadDashboard();
-        });
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js').catch(() => {});
-            });
-        }
-    </script>
-
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+    <button class="refresh-btn" id="refreshBtn" onclick="loadDashboard()">↻</button>
+  </div>
+  <div class="updated" id="lastUpdated">Memuat data terakhir...</div>
+
+  <!-- Budget Health -->
+  <div class="status-card">
+    <div class="row1">
+      <span class="status-label">Budget Health</span>
+      <span class="status-pill healthy" id="healthPill">HEALTHY</span>
+    </div>
+    <div class="big" id="usageRateBig">0%</div>
+    <div class="desc" id="healthDesc">Memuat status budget...</div>
+    <div class="bar-track"><div class="bar-fill" id="usageBar"></div></div>
+    <div class="status-meta">
+      <span>Terpakai</span>
+      <span id="usageMetaText">0%</span>
+    </div>
+  </div>
+
+  <!-- KPI ringkas -->
+  <div class="kpi-list">
+    <div class="kpi-row"><div class="name"><span class="ic">💰</span>Total Budget</div><div class="val" id="kpiBudget">Rp 0</div></div>
+    <div class="kpi-row"><div class="name"><span class="ic">📄</span>Total PO Issued</div><div class="val" id="kpiIssued">Rp 0</div></div>
+    <div class="kpi-row"><div class="name"><span class="ic">📥</span>Total Receiving</div><div class="val" id="kpiReceived">Rp 0</div></div>
+    <div class="kpi-row"><div class="name"><span class="ic">🪙</span>Sisa Budget</div><div class="val" id="kpiRemaining">Rp 0</div></div>
+  </div>
+  <div class="kpi-list">
+    <div class="kpi-row"><div class="name"><span class="ic">✅</span>Kategori Healthy</div><div class="val" id="kpiHealthy">0</div></div>
+    <div class="kpi-row"><div class="name"><span class="ic">⚠️</span>Kategori Warning</div><div class="val" id="kpiWarning">0</div></div>
+    <div class="kpi-row"><div class="name"><span class="ic">🚨</span>Kategori Over Budget</div><div class="val" id="kpiOver">0</div></div>
+  </div>
+
+  <!-- Insights -->
+  <div class="section">
+    <div class="section-head"><h2>📌 Insight Singkat</h2></div>
+    <div id="insightList"></div>
+  </div>
+
+  <!-- Kategori tracking -->
+  <div class="section">
+    <div class="section-head">
+      <h2>Budget per Kategori</h2>
+      <span class="count" id="catCount">0 kategori</span>
+    </div>
+    <div class="filters">
+      <select id="statusFilter" onchange="applyFilters()">
+        <option value="ALL">Semua Status</option>
+        <option value="OK">Healthy</option>
+        <option value="WARNING">Warning</option>
+        <option value="OVER">Over Budget</option>
+      </select>
+      <input id="searchInput" type="text" placeholder="Cari kategori..." oninput="applyFilters()">
+    </div>
+    <div id="categoryList"></div>
+  </div>
+
+  <!-- Pareto -->
+  <div class="section">
+    <div class="section-head">
+      <h2>📊 PO Issued &amp; Receiving by Pareto</h2>
+      <span class="count" id="paretoCount">0 grup</span>
+    </div>
+    <div id="paretoList"></div>
+  </div>
+
+  <!-- Supplier -->
+  <details class="collapse section">
+    <summary class="section-head"><h2>🏆 Top 5 Supplier Receiving</h2><span class="chev">▾</span></summary>
+    <div id="supplierList" style="margin-top:6px;"></div>
+  </details>
+
+  <details class="collapse section">
+    <summary class="section-head"><h2>📄 Top 5 Supplier PO Issued</h2><span class="chev">▾</span></summary>
+    <div id="supplierIssuedList" style="margin-top:6px;"></div>
+  </details>
+
+  <div class="footer">© 2026 Procurement Dashboard Alpro · Versi mobile, ringkas & mudah dibaca dari HP.</div>
+</div>
+
+<script>
+const PROCUREMENT_API_URL = 'https://script.google.com/macros/s/AKfycbymp0rM8EaO7nGVYjdzj-f_6IoFqRMudK78v1sdUJGSfD6-UyFcRiim0PrwGU3_Npqm/exec';
+
+let rawTrackingData = [];
+let filteredTrackingData = [];
+let supplierData = [];
+let supplierIssuedData = [];
+let analyticsData = null;
+let rawReceivingData = [];
+let rawIssuedData = [];
+
+function formatCurrency(value){
+  const n = Number(value) || 0;
+  if (Math.abs(n) >= 1000000000) return 'Rp ' + (n/1000000000).toFixed(2).replace(/\.00$/,'') + 'M';
+  if (Math.abs(n) >= 1000000) return 'Rp ' + (n/1000000).toFixed(1).replace(/\.0$/,'') + 'Jt';
+  return 'Rp ' + new Intl.NumberFormat('id-ID',{maximumFractionDigits:0}).format(n);
+}
+function formatFull(value){
+  return 'Rp ' + new Intl.NumberFormat('id-ID',{maximumFractionDigits:0}).format(Number(value)||0);
+}
+function formatPercent(value){ return `${Number(value||0).toFixed(1)}%`; }
+
+function normalizeStatus(item){
+  const used = Number(item['% Used']) || 0;
+  const rawStatus = String(item['Status'] || '').toLowerCase();
+  if (rawStatus.includes('over') || used > 100) return 'OVER';
+  if (used >= 80) return 'WARNING';
+  return 'OK';
+}
+function statusBadge(status){
+  if (status === 'OVER') return '<span class="badge over">Over Budget</span>';
+  if (status === 'WARNING') return '<span class="badge warning">Warning</span>';
+  return '<span class="badge ok">Healthy</span>';
+}
+function statusColor(used){
+  if (used > 100) return '#f87171';
+  if (used >= 80) return '#f59e0b';
+  return '#10b981';
+}
+
+function computeFallbackAnalytics(tracking, suppliers, suppliersIssued = []) {
+  const cleanRows = tracking.filter(item => item['Category'] !== 'GRAND TOTAL');
+  const totals = cleanRows.reduce((acc, item) => {
+    acc.totalBudget += Number(item['Budget']) || 0;
+    acc.totalIssued += Number(item['PO Issued']) || 0;
+    acc.totalReceived += Number(item['PO Received']) || 0;
+    acc.totalRemaining += Number(item['Sisa Budget']) || 0;
+    return acc;
+  }, { totalBudget:0, totalIssued:0, totalReceived:0, totalRemaining:0 });
+
+  const categoryHealth = cleanRows.reduce((acc, item) => {
+    const status = normalizeStatus(item);
+    if (status === 'OVER') acc.overBudget += 1;
+    else if (status === 'WARNING') acc.warning += 1;
+    else acc.healthy += 1;
+    acc.total += 1;
+    return acc;
+  }, { total:0, healthy:0, warning:0, overBudget:0 });
+
+  const usageRate = totals.totalBudget > 0 ? ((totals.totalReceived / totals.totalBudget) * 100) : 0;
+  const topCategoriesByReceiving = [...cleanRows]
+    .sort((a,b) => (Number(b['PO Received'])||0) - (Number(a['PO Received'])||0))
+    .slice(0,5)
+    .map(item => ({ category:item['Category'], received:Number(item['PO Received'])||0, budget:Number(item['Budget'])||0, usedPercent:Number(item['% Used'])||0 }));
+
+  const topSuppliersReceiving = [...suppliers].sort((a,b)=>(Number(b.totalSpent)||0)-(Number(a.totalSpent)||0)).slice(0,5);
+  const topSuppliersIssued = [...suppliersIssued].sort((a,b)=>(Number(b.totalSpent)||0)-(Number(a.totalSpent)||0)).slice(0,5);
+
+  let budgetHealthLabel = 'Healthy';
+  if (usageRate > 100 || categoryHealth.overBudget > 0) budgetHealthLabel = 'Critical';
+  else if (usageRate >= 80 || categoryHealth.warning > 0) budgetHealthLabel = 'Watchlist';
+
+  return {
+    totals: { ...totals, usageRate: Number(usageRate.toFixed(2)) },
+    categoryHealth,
+    topCategoriesByReceiving,
+    topSuppliersReceiving,
+    topSuppliersIssued,
+    budgetHealthLabel,
+    insights: [
+      `Total kategori aktif: ${categoryHealth.total}`,
+      `Kategori over budget: ${categoryHealth.overBudget}`,
+      `Kategori warning (>=80%): ${categoryHealth.warning}`,
+      topCategoriesByReceiving[0] ? `Receiving tertinggi: ${topCategoriesByReceiving[0].category}` : 'Receiving tertinggi: Belum ada data',
+      topSuppliersReceiving[0] ? `Supplier receiving terbesar: ${topSuppliersReceiving[0].supplier}` : 'Supplier receiving terbesar: Belum ada data',
+      topSuppliersIssued[0] ? `Supplier PO Issued terbesar: ${topSuppliersIssued[0].supplier}` : 'Supplier PO Issued terbesar: Belum ada data'
+    ]
+  };
+}
+
+function setHealthCard(analytics){
+  const label = String(analytics.budgetHealthLabel || 'Healthy');
+  const usageRate = Number(analytics.totals?.usageRate || 0);
+  const pill = document.getElementById('healthPill');
+  pill.textContent = label.toUpperCase();
+  pill.className = 'status-pill';
+  if (label.toLowerCase()==='critical') pill.classList.add('critical');
+  else if (label.toLowerCase()==='watchlist') pill.classList.add('watchlist');
+  else pill.classList.add('healthy');
+
+  document.getElementById('usageRateBig').textContent = formatPercent(usageRate);
+  document.getElementById('usageMetaText').textContent = formatPercent(usageRate);
+  document.getElementById('usageBar').style.width = Math.min(usageRate,100) + '%';
+
+  let desc = 'Budget utilization masih aman dan stabil.';
+  if (label.toLowerCase()==='critical') desc = 'Ada kategori over budget / utilization sudah tinggi. Perlu tindak lanjut cepat.';
+  else if (label.toLowerCase()==='watchlist') desc = 'Beberapa kategori mendekati batas aman budget. Perlu dimonitor lebih ketat.';
+  document.getElementById('healthDesc').textContent = desc;
+}
+
+function setKpis(analytics){
+  document.getElementById('kpiBudget').textContent = formatCurrency(analytics.totals?.totalBudget||0);
+  document.getElementById('kpiIssued').textContent = formatCurrency(analytics.totals?.totalIssued||0);
+  document.getElementById('kpiReceived').textContent = formatCurrency(analytics.totals?.totalReceived||0);
+  document.getElementById('kpiRemaining').textContent = formatCurrency(analytics.totals?.totalRemaining||0);
+  document.getElementById('kpiHealthy').textContent = analytics.categoryHealth?.healthy||0;
+  document.getElementById('kpiWarning').textContent = analytics.categoryHealth?.warning||0;
+  document.getElementById('kpiOver').textContent = analytics.categoryHealth?.overBudget||0;
+}
+
+function setInsights(analytics){
+  const el = document.getElementById('insightList');
+  const insights = Array.isArray(analytics.insights) && analytics.insights.length
+    ? analytics.insights : ['Belum ada insight yang dapat ditampilkan.'];
+  el.innerHTML = insights.map(item => {
+    const parts = String(item).split(':');
+    if (parts.length > 1){
+      const label = parts.shift().trim();
+      const value = parts.join(':').trim();
+      return `<div class="insight-item"><span class="dot">•</span><div>${label}<b>${value}</b></div></div>`;
+    }
+    return `<div class="insight-item"><span class="dot">•</span><div>${item}</div></div>`;
+  }).join('');
+}
+
+function renderCategoryList(data){
+  const container = document.getElementById('categoryList');
+  const rows = data.filter(item => item['Category'] !== 'GRAND TOTAL');
+
+  if (!rows.length){
+    container.innerHTML = '<div class="empty">Tidak ada kategori yang cocok dengan filter.</div>';
+    document.getElementById('catCount').textContent = '0 kategori';
+    return;
+  }
+
+  let totalIssued=0, totalReceived=0, totalBudget=0, totalRemaining=0;
+
+  const cards = rows.map(item => {
+    const issued = Number(item['PO Issued'])||0;
+    const received = Number(item['PO Received'])||0;
+    const budget = Number(item['Budget'])||0;
+    const remaining = Number(item['Sisa Budget'])||0;
+    const used = Number(item['% Used'])||0;
+    const status = normalizeStatus(item);
+    totalIssued+=issued; totalReceived+=received; totalBudget+=budget; totalRemaining+=remaining;
+
+    return `
+      <div class="cat-card">
+        <div class="cat-top">
+          <div class="cat-name">${item['Category']}</div>
+          ${statusBadge(status)}
+        </div>
+        <div class="cat-track"><span style="width:${Math.min(used,100)}%;background:${statusColor(used)};"></span></div>
+        <div class="cat-grid">
+          <div class="lbl">PO Issued</div><div class="v">${formatFull(issued)}</div>
+          <div class="lbl">PO Received</div><div class="v">${formatFull(received)}</div>
+          <div class="lbl">Budget</div><div class="v">${formatFull(budget)}</div>
+          <div class="lbl">Sisa Budget</div><div class="v">${formatFull(remaining)}</div>
+          <div class="lbl">% Used</div><div class="v">${formatPercent(used)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const totalPercent = totalBudget > 0 ? (totalReceived/totalBudget)*100 : 0;
+  const totalCard = `
+    <div class="cat-card total-card">
+      <div class="cat-top">
+        <div class="cat-name">📊 GRAND TOTAL</div>
+        ${statusBadge(totalPercent>100?'OVER':totalPercent>=80?'WARNING':'OK')}
+      </div>
+      <div class="cat-grid">
+        <div class="lbl">PO Issued</div><div class="v">${formatFull(totalIssued)}</div>
+        <div class="lbl">PO Received</div><div class="v">${formatFull(totalReceived)}</div>
+        <div class="lbl">Budget</div><div class="v">${formatFull(totalBudget)}</div>
+        <div class="lbl">Sisa Budget</div><div class="v">${formatFull(totalRemaining)}</div>
+        <div class="lbl">% Used</div><div class="v">${formatPercent(totalPercent)}</div>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = cards + totalCard;
+  document.getElementById('catCount').textContent = `${rows.length} kategori`;
+}
+
+function renderSupplierList(list, containerId, emptyMessage){
+  const container = document.getElementById(containerId);
+  if (!list.length){
+    container.innerHTML = `<div class="empty">${emptyMessage}</div>`;
+    return;
+  }
+  container.innerHTML = list.map((item,i) => `
+    <div class="sup-item">
+      <div class="sup-rank">${i+1}</div>
+      <div class="sup-name">${item.supplier}</div>
+      <div class="sup-amount">${formatCurrency(item.totalSpent)}</div>
+    </div>
+  `).join('');
+}
+
+function renderParetoList(issuedData, receivingData){
+  const container = document.getElementById('paretoList');
+  const paretoOrder = ['A','AA','B','C','D','E','F','NEW'];
+  const paretoColorMap = { 'A':'#8b5cf6','AA':'#6366f1','B':'#0ea5e9','C':'#10b981','D':'#f59e0b','E':'#f97316','F':'#ef4444','NEW':'#ec4899' };
+  const fallbackColors = ['#8b5cf6','#ec4899','#f59e0b','#10b981','#0ea5e9'];
+
+  const issuedGrouped = {};
+  issuedData.forEach(item => {
+    if (!item['Pareto'] || String(item['Pareto']).trim()==='') return;
+    const pareto = String(item['Pareto']).trim();
+    const nilai = Number(item['Nilai PO']) || Number(item['PO Issued']) || 0;
+    issuedGrouped[pareto] = (issuedGrouped[pareto]||0) + nilai;
+  });
+  const receivingGrouped = {};
+  receivingData.forEach(item => {
+    if (!item['Pareto'] || String(item['Pareto']).trim()==='') return;
+    const pareto = String(item['Pareto']).trim();
+    const nilai = Number(item['Nilai Received']) || Number(item['Nilai Receive']) || Number(item['PO Received']) || 0;
+    receivingGrouped[pareto] = (receivingGrouped[pareto]||0) + nilai;
+  });
+
+  const allPareto = [...new Set([...Object.keys(issuedGrouped), ...Object.keys(receivingGrouped)])];
+  const sorted = allPareto.sort((a,b) => {
+    const ia = paretoOrder.indexOf(a.toUpperCase());
+    const ib = paretoOrder.indexOf(b.toUpperCase());
+    if (ia===-1 && ib===-1) return a.localeCompare(b);
+    if (ia===-1) return 1;
+    if (ib===-1) return -1;
+    return ia-ib;
+  });
+
+  if (!sorted.length){
+    container.innerHTML = '<div class="empty">Data Pareto belum tersedia.</div>';
+    document.getElementById('paretoCount').textContent = '0 grup';
+    return;
+  }
+
+  const totalIssued = Object.values(issuedGrouped).reduce((s,v)=>s+v,0);
+  const totalReceived = Object.values(receivingGrouped).reduce((s,v)=>s+v,0);
+
+  const items = sorted.map((pareto,i) => {
+    const issued = issuedGrouped[pareto]||0;
+    const received = receivingGrouped[pareto]||0;
+    const pctIssued = totalIssued>0 ? ((issued/totalIssued)*100).toFixed(1) : '0.0';
+    const pctReceived = totalReceived>0 ? ((received/totalReceived)*100).toFixed(1) : '0.0';
+    const color = paretoColorMap[pareto.toUpperCase()] || fallbackColors[i % fallbackColors.length];
+    return `
+      <div class="pareto-item">
+        <div class="pareto-tag" style="background:${color};">${pareto}</div>
+        <div class="pareto-body">
+          <div class="row"><span class="l">PO Issued</span><span class="v">${formatCurrency(issued)} (${pctIssued}%)</span></div>
+          <div class="row"><span class="l">PO Received</span><span class="v">${formatCurrency(received)} (${pctReceived}%)</span></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const totalItem = `
+    <div class="cat-card total-card">
+      <div class="cat-top">
+        <div class="cat-name">📊 GRAND TOTAL</div>
+      </div>
+      <div class="cat-grid">
+        <div class="lbl">Total PO Issued</div><div class="v">${formatFull(totalIssued)}</div>
+        <div class="lbl">Total PO Received</div><div class="v">${formatFull(totalReceived)}</div>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = items + totalItem;
+  document.getElementById('paretoCount').textContent = `${sorted.length} grup pareto`;
+}
+
+function applyFilters(){
+  const status = document.getElementById('statusFilter').value;
+  const search = document.getElementById('searchInput').value.trim().toLowerCase();
+
+  filteredTrackingData = rawTrackingData.filter(item => item['Category'] !== 'GRAND TOTAL').filter(item => {
+    const matchStatus = status === 'ALL' || normalizeStatus(item) === status;
+    const matchSearch = !search || String(item['Category']).toLowerCase().includes(search);
+    return matchStatus && matchSearch;
+  });
+
+  renderCategoryList(filteredTrackingData);
+}
+
+async function loadDashboard(){
+  const loadingEl = document.getElementById('loading');
+  const refreshBtn = document.getElementById('refreshBtn');
+  try {
+    loadingEl.classList.add('active');
+    refreshBtn.classList.add('spin');
+
+    const response = await fetch(PROCUREMENT_API_URL);
+    if (!response.ok) throw new Error('Gagal mengambil data dari web app');
+    const result = await response.json();
+    if (result.error) throw new Error(result.error);
+
+    rawTrackingData = Array.isArray(result.tracking) ? result.tracking : [];
+    supplierData = Array.isArray(result.topSuppliersReceiving) && result.topSuppliersReceiving.length
+      ? result.topSuppliersReceiving
+      : (Array.isArray(result.suppliers) ? [...result.suppliers].slice(0,5) : []);
+    supplierIssuedData = Array.isArray(result.topSuppliersIssued) && result.topSuppliersIssued.length
+      ? result.topSuppliersIssued
+      : (result.analytics?.topSuppliersIssued?.length ? result.analytics.topSuppliersIssued : (Array.isArray(result.suppliersIssued) ? [...result.suppliersIssued].slice(0,5) : []));
+    analyticsData = result.analytics && Object.keys(result.analytics).length
+      ? result.analytics
+      : computeFallbackAnalytics(
+          rawTrackingData,
+          Array.isArray(result.suppliers) ? result.suppliers : supplierData,
+          Array.isArray(result.suppliersIssued) ? result.suppliersIssued : supplierIssuedData
+        );
+
+    rawReceivingData = Array.isArray(result.receiving) ? result.receiving
+      : Array.isArray(result.rawReceiving) ? result.rawReceiving
+      : Array.isArray(result.poReceived) ? result.poReceived : [];
+    rawIssuedData = Array.isArray(result.issued) ? result.issued
+      : Array.isArray(result.rawIssued) ? result.rawIssued
+      : Array.isArray(result.poIssued) ? result.poIssued : [];
+
+    filteredTrackingData = rawTrackingData.filter(item => item['Category'] !== 'GRAND TOTAL');
+
+    setHealthCard(analyticsData);
+    setKpis(analyticsData);
+    setInsights(analyticsData);
+    renderCategoryList(filteredTrackingData);
+    renderSupplierList(supplierData, 'supplierList', 'Data supplier receiving belum tersedia.');
+    renderSupplierList(supplierIssuedData, 'supplierIssuedList', 'Data supplier PO Issued belum tersedia.');
+    renderParetoList(
+      rawIssuedData.length ? rawIssuedData : filteredTrackingData,
+      rawReceivingData.length ? rawReceivingData : filteredTrackingData
+    );
+
+    document.getElementById('lastUpdated').textContent = 'Terakhir update: ' + new Date().toLocaleString('id-ID');
+  } catch (error) {
+    console.error(error);
+    document.getElementById('lastUpdated').textContent = 'Gagal memuat data';
+    alert('⚠️ ' + error.message + '\n\nPastikan URL Web App benar dan sudah di-deploy sebagai Anyone.');
+  } finally {
+    loadingEl.classList.remove('active');
+    refreshBtn.classList.remove('spin');
+  }
+}
+
+window.addEventListener('load', loadDashboard);
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js').catch(() => {});
+  });
+}
+</script>
 </body>
 </html>
