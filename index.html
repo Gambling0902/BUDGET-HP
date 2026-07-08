@@ -58,6 +58,25 @@
     font-size:11.5px; color:var(--muted); text-align:center; margin-bottom:14px;
   }
 
+  /* Sticky quick nav */
+  .quicknav{
+    position:sticky; top:0; z-index:30;
+    display:flex; gap:6px; background:var(--bg);
+    padding:8px 0 10px; margin:-6px 0 12px;
+    overflow-x:auto; -webkit-overflow-scrolling:touch;
+  }
+  .quicknav::-webkit-scrollbar{ display:none; }
+  .quicknav a{
+    flex:1 0 auto; text-align:center; text-decoration:none;
+    font-size:12.5px; font-weight:700; color:var(--muted);
+    background:#fff; border:1px solid var(--line); border-radius:999px;
+    padding:8px 14px; white-space:nowrap; transition:all .15s ease;
+  }
+  .quicknav a.active{
+    background:var(--accent); color:#fff; border-color:var(--accent);
+  }
+  .anchor-offset{ scroll-margin-top:56px; }
+
   /* Status hero */
   .status-card{
     border-radius:18px; padding:18px; margin-bottom:12px; color:#fff;
@@ -204,8 +223,15 @@
   </div>
   <div class="updated" id="lastUpdated">Memuat data terakhir...</div>
 
+  <nav class="quicknav" id="quickNav">
+    <a href="#sec-ringkasan" data-target="sec-ringkasan" class="active">Ringkasan</a>
+    <a href="#sec-kategori" data-target="sec-kategori">Kategori</a>
+    <a href="#sec-pareto" data-target="sec-pareto">Pareto</a>
+    <a href="#sec-supplier" data-target="sec-supplier">Supplier</a>
+  </nav>
+
   <!-- Budget Health -->
-  <div class="status-card">
+  <div class="status-card anchor-offset" id="sec-ringkasan">
     <div class="row1">
       <span class="status-label">Budget Health</span>
       <span class="status-pill healthy" id="healthPill">HEALTHY</span>
@@ -239,7 +265,7 @@
   </div>
 
   <!-- Kategori tracking -->
-  <div class="section">
+  <div class="section anchor-offset" id="sec-kategori">
     <div class="section-head">
       <h2>Budget per Kategori</h2>
       <span class="count" id="catCount">0 kategori</span>
@@ -257,7 +283,7 @@
   </div>
 
   <!-- Pareto -->
-  <div class="section">
+  <div class="section anchor-offset" id="sec-pareto">
     <div class="section-head">
       <h2>📊 PO Issued &amp; Receiving by Pareto</h2>
       <span class="count" id="paretoCount">0 grup</span>
@@ -266,15 +292,17 @@
   </div>
 
   <!-- Supplier -->
-  <details class="collapse section">
-    <summary class="section-head"><h2>🏆 Top 5 Supplier Receiving</h2><span class="chev">▾</span></summary>
-    <div id="supplierList" style="margin-top:6px;"></div>
-  </details>
+  <div class="anchor-offset" id="sec-supplier">
+    <details class="collapse section">
+      <summary class="section-head"><h2>🏆 Top 5 Supplier Receiving</h2><span class="chev">▾</span></summary>
+      <div id="supplierList" style="margin-top:6px;"></div>
+    </details>
 
-  <details class="collapse section">
-    <summary class="section-head"><h2>📄 Top 5 Supplier PO Issued</h2><span class="chev">▾</span></summary>
-    <div id="supplierIssuedList" style="margin-top:6px;"></div>
-  </details>
+    <details class="collapse section">
+      <summary class="section-head"><h2>📄 Top 5 Supplier PO Issued</h2><span class="chev">▾</span></summary>
+      <div id="supplierIssuedList" style="margin-top:6px;"></div>
+    </details>
+  </div>
 
   <div class="footer">© 2026 Procurement Dashboard Alpro · Versi mobile, ringkas & mudah dibaca dari HP.</div>
 </div>
@@ -633,7 +661,43 @@ async function loadDashboard(){
   }
 }
 
-window.addEventListener('load', loadDashboard);
+// Quick-nav: smooth scroll + auto-highlight based on scroll position
+function initQuickNav(){
+  const navLinks = Array.from(document.querySelectorAll('#quickNav a'));
+  const targets = navLinks.map(a => document.getElementById(a.dataset.target)).filter(Boolean);
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const el = document.getElementById(link.dataset.target);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  function setActive(id){
+    navLinks.forEach(link => link.classList.toggle('active', link.dataset.target === id));
+  }
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const scrollPos = window.scrollY + 90;
+      let current = targets[0]?.id;
+      targets.forEach(el => {
+        if (el.offsetTop <= scrollPos) current = el.id;
+      });
+      if (current) setActive(current);
+      ticking = false;
+    });
+  }, { passive: true });
+}
+
+window.addEventListener('load', () => {
+  loadDashboard();
+  initQuickNav();
+});
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
